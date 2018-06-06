@@ -38,7 +38,7 @@ The 2-tag selection is:
 The ttbar candidate mass assumes the two leading top-tagged jets are the top quarks. 
 """
 class TTbarResAnaHadronic(Module):
-    def __init__(self, htCut=1100., minMSD=110., maxMSD=240., tau32Cut=0.6, ak8PtMin=400., bdisc=0.7, writePredDist=False ):
+    def __init__(self, htCut=1100., minMSD=110., maxMSD=240., tau32Cut=0.6, ak8PtMin=400., bdisc=0.7, writePredDist=False, isData=False):
         """ Initialization for the module 
         """
         self.htCut = htCut
@@ -49,17 +49,21 @@ class TTbarResAnaHadronic(Module):
         self.bdisc = bdisc
         self.writePredDist = writePredDist
         self.writeHistFile = True
-
-        self.systs = [
-            'nom',
-            'pu_up',  'pu_dn',
-            'pdf_up', 'pdf_dn',
-            'ps_up',  'ps_dn',
-            'jec_up', 'jec_dn',
-            'jer_up', 'jer_dn',
-            'jms_up', 'jms_dn',
-            'jmr_up', 'jmr_dn'
-            ]
+        self.isData = isData
+        
+        if not self.isData : 
+            self.systs = [
+                'nom',
+                'pu_up',  'pu_dn',
+                'pdf_up', 'pdf_dn',
+                'ps_up',  'ps_dn',
+                'jec_up', 'jec_dn',
+                'jer_up', 'jer_dn',
+                'jms_up', 'jms_dn',
+                'jmr_up', 'jmr_dn'
+                ]
+        else :
+            self.systs = [ 'nom' ]
         self.btagcats = ["0b", "1b", "2b"]   # 0, 1, >=2 btags
         self.ycats = ['cen', 'fwd']          # Central and forward
         # Combine categories like "0bcen", "0bfwd", etc:
@@ -127,8 +131,15 @@ class TTbarResAnaHadronic(Module):
                     ROOT.SetOwnership( hist, False )
         else:
             for iana in xrange(len(self.anacatvals)):
-                self.addObject( ROOT.TH1D("preddist"+str(iana), "preddist"+str(iana), 25, 0, 2500) )
-            self.preddist = [ getattr( self, "preddist"+str(iana)) for iana in xrange(len(self.anacatvals))]
+                self.addObject( ROOT.TH1D("preddist"+str(iana) + "_num", "preddist"+str(iana) + "_num", 5000, 0, 5000) )
+                self.addObject( ROOT.TH1D("preddist"+str(iana) + "_den", "preddist"+str(iana) + "_den", 5000, 0, 5000) )
+                self.addObject( ROOT.TH1D("preddistrho"+str(iana) + "_num", "preddistrho"+str(iana) + "_num", 5000, 0, 1) )
+                self.addObject( ROOT.TH1D("preddistrho"+str(iana) + "_den", "preddistrho"+str(iana) + "_den", 5000, 0, 1) )
+
+            self.preddist_num = [ getattr( self, "preddist"+str(iana)+"_num") for iana in xrange(len(self.anacatvals))]
+            self.preddist_den = [ getattr( self, "preddist"+str(iana)+"_den") for iana in xrange(len(self.anacatvals))]
+            self.preddistrho_num = [ getattr( self, "preddistrho"+str(iana)+"_num") for iana in xrange(len(self.anacatvals))]
+            self.preddistrho_den = [ getattr( self, "preddistrho"+str(iana)+"_den") for iana in xrange(len(self.anacatvals))]
             
     def endJob(self):
         """Calculate the correlated and uncorrelated errors.
@@ -163,15 +174,34 @@ class TTbarResAnaHadronic(Module):
         """
         self.weightsDict = {}
         self.weightsDict[self.nom] = 1.0
-        self.weightsDict[self.pu_up] = 1.0
-        self.weightsDict[self.pu_dn] = 1.0
-        self.weightsDict[self.pdf_up] = 1.0
-        self.weightsDict[self.pdf_dn] = 1.0
-        self.weightsDict[self.ps_up] = 1.0
-        self.weightsDict[self.ps_dn] = 1.0
+        if not self.isData : 
+            self.weightsDict[self.pu_up] = 1.0
+            self.weightsDict[self.pu_dn] = 1.0
+            self.weightsDict[self.pdf_up] = 1.0
+            self.weightsDict[self.pdf_dn] = 1.0
+            self.weightsDict[self.ps_up] = 1.0
+            self.weightsDict[self.ps_dn] = 1.0
         return True
+
     
-    def deriveJetSysts(self, jetSysCollAK4=None, jetSysCollAK8=None):
+    def deriveJetSystsData(self, jetSysCollAK4=None, jetSysCollAK8=None):
+        """ Derive all of the jet-based kinematic systematic uncertainties. This includes JEC, JER, JMS, JMR.
+        """
+        if jetSysCollAK4 != None:
+            for ijet, jet in enumerate(jetSysCollAK4.jets_raw()) :
+                if ijet not in jetSysCollAK4[self.nom].keys() :
+                    continue
+                jetSysCollAK4[self.nom   ][ijet].p4().SetPtEtaPhiM( jet.pt          , jet.eta, jet.phi, jet.mass          )
+
+        if jetSysCollAK8 != None:
+            for ijet, jet in enumerate(jetSysCollAK8.jets_raw()) :
+                if ijet not in jetSysCollAK8[self.nom].keys() :
+                    continue
+                jetSysCollAK8[self.nom   ][ijet].p4().SetPtEtaPhiM( jet.pt          , jet.eta, jet.phi, jet.mass          )
+                jetSysCollAK8[self.nom   ][ijet].msd_ = jet.msoftdrop
+
+    
+    def deriveJetSystsMC(self, jetSysCollAK4=None, jetSysCollAK8=None):
         """ Derive all of the jet-based kinematic systematic uncertainties. This includes JEC, JER, JMS, JMR.
         """
         if jetSysCollAK4 != None:
@@ -230,6 +260,7 @@ class TTbarResAnaHadronic(Module):
         ak8Jets = [ x for x in self.ak8JetsColl if x.jetId > 0 ]
         if len(ak8Jets) < 2 :
             return False
+
         
         # Make the systematic variations.
         jetSysCollAK4 = JetSysColl(self.ak4JetsColl, self.systvals, sel = lambda x : x.jetId > 0)
@@ -237,7 +268,10 @@ class TTbarResAnaHadronic(Module):
                 
         # Derive the kinematic systematic effects. In this case,
         # jet-based systematic 4-vectors (AK4: JEC+JER, AK8:JEC+JER+JMS+JMR)
-        self.deriveJetSysts(jetSysCollAK4, jetSysCollAK8)
+        if not self.isData : 
+            self.deriveJetSystsMC(jetSysCollAK4, jetSysCollAK8)
+        else :
+            self.deriveJetSystsData(jetSysCollAK4, jetSysCollAK8)
 
         # Derive the weights to be used. 
         self.deriveWeights()
@@ -288,7 +322,7 @@ class TTbarResAnaHadronic(Module):
             ttbarP4 =  ak8JetsSys[iprobejet].p4() + ak8JetsSys[itagjet].p4()
 
             # Find the analysis category: (0b,1b,2b) x (y<1,y>1)
-            nbtag = min(2, sum( [ak8JetsSys[x].raw().maxCSVV2 > self.bdisc for x in [iprobejet,itagjet] ] ))
+            nbtag = min(2, sum( [ak8JetsSys[x].raw().btagCSVV2 > self.bdisc for x in [iprobejet,itagjet] ] ))
             yreg = 1 if abs( ak8JetsSys[iprobejet].p4().Rapidity() ) < 1.0 else 0
             anacat = self.formcat( nbtag, yreg )
 
@@ -302,7 +336,11 @@ class TTbarResAnaHadronic(Module):
                 else:
                     # Here is the anti-ttag region selection to derive the mistag rate. 
                     if isys == self.nom:
-                        self.preddist[anacat].Fill( ak8JetsSys[iprobejet].p4().P(), weight )
+                        self.preddist_den[anacat].Fill( ak8JetsSys[iprobejet].p4().P(), weight )
+                        self.preddistrho_den[anacat].Fill( ak8JetsSys[iprobejet].p4().M() / ak8JetsSys[iprobejet].p4().Perp(), weight )
+                        if self.passTopTag( ak8JetsSys[iprobejet] ):
+                            self.preddist_num[anacat].Fill( ak8JetsSys[iprobejet].p4().P(), weight )
+                            self.preddistrho_num[anacat].Fill( ak8JetsSys[iprobejet].p4().M() / ak8JetsSys[iprobejet].p4().Perp(), weight )
 
             # Here we have the actual signal region: 
             if not self.writePredDist:
@@ -320,3 +358,5 @@ class TTbarResAnaHadronic(Module):
 
 ttbarreshad = lambda : TTbarResAnaHadronic() 
 ttbarreshad_preddistwriter = lambda : TTbarResAnaHadronic(writePredDist=True)
+ttbarreshad_data = lambda : TTbarResAnaHadronic(isData=True) 
+ttbarreshad_preddistwriter_data = lambda : TTbarResAnaHadronic(writePredDist=True,isData=True)
