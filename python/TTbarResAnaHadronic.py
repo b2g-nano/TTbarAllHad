@@ -341,6 +341,7 @@ class TTbarResAnaHadronic(Module):
                         if self.passTopTag( ak8JetsSys[iprobejet] ):
                             self.preddist_num[anacat].Fill( ak8JetsSys[iprobejet].p4().P(), weight )
                             self.preddistrho_num[anacat].Fill( ak8JetsSys[iprobejet].p4().M() / ak8JetsSys[iprobejet].p4().Perp(), weight )
+                        return True
 
             # Here we have the actual signal region: 
             if not self.writePredDist:
