@@ -87,8 +87,8 @@ def main():
 
         adataset = job.rstrip()
 
-        config.JobType.scriptExe = 'crab_script.sh' 
-        config.JobType.inputFiles = [options.cfg ,'crab_script.sh', 'run_plots.py' ,'./haddnano.py', 'keep_and_drop.txt', 'FrameworkJobReport.xml']
+        config.JobType.scriptExe = 'crab_script_rejec.sh' 
+        config.JobType.inputFiles = [options.cfg ,'crab_script_rejec.sh', 'run_jec.py' ,'./haddnano.py', 'keep_and_drop.txt', 'FrameworkJobReport.xml']
         config.JobType.sendPythonFolder  = True
         
         lfnList = eos_get_rootfiles( adataset )
@@ -100,7 +100,7 @@ def main():
         config.Data.unitsPerJob = 50
       
         
-        config.JobType.outputFiles = [ 'ttbarreshad_predfile.root']#, 'ttbarreshad_nanoskim.root' ]
+        config.JobType.outputFiles = [ 'ttbarreshad_nanoskim.root' ]
 
         requestname = adataset.split('/')[-1]
         print 'requestname = ', requestname

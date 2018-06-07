@@ -1,1 +1,9 @@
-keep *
+drop Jet*
+drop Electron*
+drop Muon*
+drop Tau*
+drop PFCands*
+drop IsoTrack*
+drop SoftActivity*
+drop GenPartAK8*
+drop GenJet_*

@@ -23,3 +23,7 @@ python run_plots.py 0
 ```
 python submit_all_uif.py -c PSet.py -d WritePredDist -f datasets_jetht.txt
 ```
+## Adding Uncertainties to MC:
+```
+python submit_rejec.py -c PSetMC.py -d Uncs -f datasets_qcd.txt -t Uncs
+```

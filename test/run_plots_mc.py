@@ -7,7 +7,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import Pos
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import *
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetRecalib import *
 from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputFiles,runsAndLumis
-
+from Analysis.TTbarAllHad.eos_get_rootfiles import *
 from Analysis.TTbarAllHad.TTbarResAnaHadronic import *
 
 
@@ -38,9 +38,8 @@ inff = inputFiles()
 print 'Input files are :'
 
 print inff
-
-#    inff = eos_get_rootfiles( '/store/user/rappocc/CRAB_UserFiles/' + dataset )
-p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.','',[ttbarreshad_preddistwriter_data()], provenance=True, histFileName='ttbarreshad_predfile.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
+#inff = ['dijets_nanoskim_1_Skim.root']
+p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.','',[ttbarreshad_preddistwriter()], provenance=True, histFileName='ttbarreshad_predfile_mc.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
 p1.run()
 
 
