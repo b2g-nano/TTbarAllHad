@@ -10,7 +10,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputF
 
 from Analysis.TTbarAllHad.TTbarResAnaHadronic import *
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import *
-from PhysicsTools.NanoAODTools.postprocessing.examples.mhtjuProducerCpp import *
+from PhysicsTools.NanoAODTools.postprocessing.examples.htProducerCpp import *
 from Analysis.TTbarAllHad.eos_get_rootfiles import *
 
 ## mcsets = [
@@ -35,12 +35,12 @@ from Analysis.TTbarAllHad.eos_get_rootfiles import *
 import random
 random.seed(12345)
 
-inff = inputFiles()
-print 'Input files are :'
+#inff = inputFiles()
+#print 'Input files are :'
 
-print inff
-#dataset = 'DijetSkim_Nrp_QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_94X'
-#inff = eos_get_rootfiles( '/store/user/rappocc/CRAB_UserFiles/' + dataset )
-p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.',"keep_and_drop.txt",[jetmetUncertainties2017AK8Puppi(),mhtju()], provenance=True,  haddFileName = 'ttbarreshad_nanoskim.root')
+#print inff
+dataset = 'DijetSkim_Nrp_QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_94X'
+inff = eos_get_rootfiles( '/store/user/rappocc/CRAB_UserFiles/' + dataset )
+p1=PostProcessor(".",inff[0:1],'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.',"keep_and_drop.txt",[ht(),jetmetUncertainties2017AK8Puppi()], provenance=True,  haddFileName = 'ttbarreshad_nanoskim.root')#, outputbranchsel='keep_and_drop_output.txt')
 p1.run()
 

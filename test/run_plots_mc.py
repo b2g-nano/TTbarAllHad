@@ -34,12 +34,15 @@ from Analysis.TTbarAllHad.TTbarResAnaHadronic import *
 import random
 random.seed(12345)
 
-inff = inputFiles()
-print 'Input files are :'
+#inff = inputFiles()
+#print 'Input files are :'
 
-print inff
+#print inff
 #inff = ['dijets_nanoskim_1_Skim.root']
-p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.','',[ttbarreshad_preddistwriter()], provenance=True, histFileName='ttbarreshad_predfile_mc.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
+
+#inff = eos_get_rootfiles("/store/user/rappocc/CRAB_UserFiles/DijetSkim_Nrp_QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_94X_Uncs")
+inff = ['ttbarreshad_nanoskim.root']
+p1=PostProcessor(".",inff[0:1],'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.','',[ttbarreshad_preddistwriter()], provenance=True, histFileName='ttbarreshad_predfile_mc.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
 p1.run()
 
 

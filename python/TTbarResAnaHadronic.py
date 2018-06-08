@@ -285,6 +285,10 @@ class TTbarResAnaHadronic(Module):
             
             # Adjust weight. If this systematic has no weight, just use nominal. 
             weight = self.applyWeight(isys)
+            # Multiply by any gen weights
+            if hasattr( event, "Generator_weight") and abs( event.Generator_weight - 1.0) > 1e-3 :
+                weight *= event.Generator_weight
+                
 
             # Now get the AK4 and AK8 jets that pass the selection, and HT.
             # Don't copy the jet (expensive), copy the index (cheap)
