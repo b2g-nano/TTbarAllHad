@@ -27,3 +27,6 @@ python submit_all_uif.py -c PSet.py -d WritePredDist -f datasets_jetht.txt
 ```
 python submit_rejec.py -c PSetMC.py -d Uncs -f datasets_qcd.txt -t Uncs
 ```
+## Creating the mistag rate
+
+Execute the python notebook [test/mistag/mistag_rate.ipynb](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/mistag/mistag_rate.ipynb). 
