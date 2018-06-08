@@ -41,6 +41,6 @@ random.seed(12345)
 #print inff
 dataset = 'DijetSkim_Nrp_QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_94X'
 inff = eos_get_rootfiles( '/store/user/rappocc/CRAB_UserFiles/' + dataset )
-p1=PostProcessor(".",inff[0:1],'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.',"keep_and_drop.txt",[ht(),jetmetUncertainties2017AK8Puppi()], provenance=True,  haddFileName = 'ttbarreshad_nanoskim.root')
+p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.',"keep_and_drop.txt",[ht(),jetmetUncertainties2017AK8Puppi()], provenance=True,  haddFileName = 'ttbarreshad_nanoskim.root', outputbranchsel='keep_and_drop_output.txt')
 p1.run()
 
