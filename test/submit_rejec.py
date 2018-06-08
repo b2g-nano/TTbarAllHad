@@ -88,7 +88,7 @@ def main():
         adataset = job.rstrip()
 
         config.JobType.scriptExe = 'crab_script_rejec.sh' 
-        config.JobType.inputFiles = [options.cfg ,'crab_script_rejec.sh', 'run_jec.py' ,'./haddnano.py', 'keep_and_drop.txt', 'FrameworkJobReport.xml']
+        config.JobType.inputFiles = [options.cfg ,'crab_script_rejec.sh', 'run_jec.py' ,'./haddnano.py', 'keep_and_drop.txt','keep_and_drop_output.txt', 'FrameworkJobReport.xml']
         config.JobType.sendPythonFolder  = True
         
         lfnList = eos_get_rootfiles( adataset )
