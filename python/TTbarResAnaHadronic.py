@@ -92,7 +92,7 @@ class TTbarResAnaHadronic(Module):
         by the mistag rate to extrapolate to the 2-tag region. 
         """
         Module.beginJob(self, histFile, histDirName)
-        self.addObjectList (self.systs, ROOT.TH1F('h_ak4ht',   'h_ak4ht',   25, 0, 2500) )
+        self.addObjectList (self.systs, ROOT.TH1F('h_ak4ht',   'h_ak4ht',   25, 0, 5000) )
         self.addObjectList (self.systs, ROOT.TH1F('h_ak8pt',   'h_ak8pt',   25, 0, 2500) )
         self.addObjectList (self.systs, ROOT.TH1F('h_ak8msd',  'h_ak8msd',  25, 0, 500) )
         self.addObjectList (self.systs, ROOT.TH1F('h_ak8tau32','h_ak8tau32',25, 0, 1.0) )
@@ -184,14 +184,9 @@ class TTbarResAnaHadronic(Module):
         return True
 
     
-    def deriveJetSystsData(self, jetSysCollAK4=None, jetSysCollAK8=None):
+    def deriveJetSystsData(self, jetSysCollAK8=None):
         """ Derive all of the jet-based kinematic systematic uncertainties. This includes JEC, JER, JMS, JMR.
         """
-        if jetSysCollAK4 != None:
-            for ijet, jet in enumerate(jetSysCollAK4.jets_raw()) :
-                if ijet not in jetSysCollAK4[self.nom].keys() :
-                    continue
-                jetSysCollAK4[self.nom   ][ijet].p4().SetPtEtaPhiM( jet.pt          , jet.eta, jet.phi, jet.mass          )
 
         if jetSysCollAK8 != None:
             for ijet, jet in enumerate(jetSysCollAK8.jets_raw()) :
@@ -201,19 +196,9 @@ class TTbarResAnaHadronic(Module):
                 jetSysCollAK8[self.nom   ][ijet].msd_ = jet.msoftdrop
 
     
-    def deriveJetSystsMC(self, jetSysCollAK4=None, jetSysCollAK8=None):
+    def deriveJetSystsMC(self, jetSysCollAK8=None):
         """ Derive all of the jet-based kinematic systematic uncertainties. This includes JEC, JER, JMS, JMR.
         """
-        if jetSysCollAK4 != None:
-            for ijet, jet in enumerate(jetSysCollAK4.jets_raw()) :
-                if ijet not in jetSysCollAK4[self.nom].keys() :
-                    continue
-                jetSysCollAK4[self.nom   ][ijet].p4().SetPtEtaPhiM( jet.pt_nom          , jet.eta, jet.phi, jet.mass_nom          )
-                jetSysCollAK4[self.jer_up][ijet].p4().SetPtEtaPhiM( jet.pt_jerUp        , jet.eta, jet.phi, jet.mass_jerUp        )
-                jetSysCollAK4[self.jer_dn][ijet].p4().SetPtEtaPhiM( jet.pt_jerDown      , jet.eta, jet.phi, jet.mass_jerDown      )
-                jetSysCollAK4[self.jec_up][ijet].p4().SetPtEtaPhiM( jet.pt_jesTotalUp   , jet.eta, jet.phi, jet.mass_jesTotalUp   )
-                jetSysCollAK4[self.jec_dn][ijet].p4().SetPtEtaPhiM( jet.pt_jesTotalDown , jet.eta, jet.phi, jet.mass_jesTotalDown )
-
         if jetSysCollAK8 != None:
             for ijet, jet in enumerate(jetSysCollAK8.jets_raw()) :
                 if ijet not in jetSysCollAK8[self.nom].keys() :
@@ -252,26 +237,23 @@ class TTbarResAnaHadronic(Module):
         """
 
         # Get the collections of AK4 and AK8 jets
-        self.ak4JetsColl = Collection(event, "Jet")
         self.ak8JetsColl = Collection(event, "FatJet")
 
         # Select the jets that satisfy jet ID. 
-        ak4Jets = [ x for x in self.ak4JetsColl if x.jetId > 0 ]
         ak8Jets = [ x for x in self.ak8JetsColl if x.jetId > 0 ]
         if len(ak8Jets) < 2 :
             return False
 
         
         # Make the systematic variations.
-        jetSysCollAK4 = JetSysColl(self.ak4JetsColl, self.systvals, sel = lambda x : x.jetId > 0)
         jetSysCollAK8 = JetSysColl(self.ak8JetsColl, self.systvals, sel = lambda x : x.jetId > 0)
                 
         # Derive the kinematic systematic effects. In this case,
         # jet-based systematic 4-vectors (AK4: JEC+JER, AK8:JEC+JER+JMS+JMR)
         if not self.isData : 
-            self.deriveJetSystsMC(jetSysCollAK4, jetSysCollAK8)
+            self.deriveJetSystsMC(jetSysCollAK8)
         else :
-            self.deriveJetSystsData(jetSysCollAK4, jetSysCollAK8)
+            self.deriveJetSystsData(jetSysCollAK8)
 
         # Derive the weights to be used. 
         self.deriveWeights()
@@ -280,7 +262,6 @@ class TTbarResAnaHadronic(Module):
         # or the weights. Both need to be adjusted.
         for isys,sys in enumerate(self.systs) :
             # Apply kinematic selection for this systematic. If no change, just use nominal. 
-            ak4JetsSys = jetSysCollAK4[isys]
             ak8JetsSys = jetSysCollAK8[isys]
             
             # Adjust weight. If this systematic has no weight, just use nominal. 
@@ -290,9 +271,8 @@ class TTbarResAnaHadronic(Module):
                 weight *= event.Generator_weight
                 
 
-            # Now get the AK4 and AK8 jets that pass the selection, and HT.
-            # Don't copy the jet (expensive), copy the index (cheap)
-            ak4JetsNdx = [i for i,x in ak4JetsSys.iteritems() if x.p4().Perp() > 20 and abs(x.p4().Eta())<2.5]
+            # Now get the AK8 jets that pass the selection.
+            # Don't copy the jet (expensive), copy the index (cheap)\
             ak8JetsNdx = [i for i,x in ak8JetsSys.iteritems() if x.p4().Perp() > self.ak8PtMin and abs(x.p4().Eta()) < 2.5]
             
             # Must have two AK8 jets that pass jet ID and kinematic cuts. 
@@ -300,7 +280,7 @@ class TTbarResAnaHadronic(Module):
                 return False
 
             # Apply HT cut to ensure we are on the trigger plateau
-            ht = sum( [ ak4JetsSys[j].p4().Perp() for j in ak4JetsNdx ] )
+            ht = event.HT_pt
             self.h_ak4ht[isys].Fill( ht, weight )
             if ht < self.htCut :
                 return False
