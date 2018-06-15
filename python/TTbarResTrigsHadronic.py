@@ -35,6 +35,17 @@ class TTbarResTrigsHadronic(Module):
             'HLT_AK8PFJet380_TrimMass30':'HLT_AK8PFJet400_TrimMass30',
             'HLT_AK8PFJet400_TrimMass30':'HLT_AK8PFJet420_TrimMass30',
             }
+        self.reftrigger = 'HLT_PFHT890'
+        self.sigtriggers = [
+            'HLT_AK8PFJet450',
+            'HLT_AK8PFJet500',
+            'HLT_PFHT890',
+            'HLT_PFHT1050',
+            'HLT_AK8PFHT850_TrimMass50',
+            'HLT_AK8PFHT900_TrimMass50',
+            'HLT_AK8PFJet400_TrimMass30',
+            'HLT_AK8PFJet420_TrimMass30'
+            ]
         
     def beginJob(self, histFile, histDirName):
         """Book control histograms and the predictions for the background.
@@ -44,8 +55,12 @@ class TTbarResTrigsHadronic(Module):
         """
         Module.beginJob(self, histFile, histDirName)
         for itrig,jtrig in self.trigTurnonList.iteritems():
-            self.addObject (ROOT.TH1F('h_ak4ht_' + itrig,   'h_ak4ht_' + itrig,   25, 0, 5000) )
+            self.addObject (ROOT.TH1F('h_ak4ht_' + itrig,                     'h_ak4ht_' + itrig,   25, 0, 5000) )
             self.addObject (ROOT.TH1F('h_ak4ht_' + itrig + '_eff_' + jtrig,   'h_ak4ht_' + jtrig,   25, 0, 5000) )
+
+        self.addObject (ROOT.TH1F('h_ak4ht_tot',     'h_ak4ht_' + itrig,   25, 0, 5000) )
+        self.addObject (ROOT.TH1F('h_ak4ht_eff_tot', 'h_ak4ht_' + jtrig,   25, 0, 5000) )
+        
             
     def endJob(self):
         Module.endJob(self)
@@ -80,7 +95,10 @@ class TTbarResTrigsHadronic(Module):
                 getattr(self, 'h_ak4ht_'+itrig).Fill( ht, weight )
                 if getattr( event, jtrig ) == 1: 
                     getattr(self, 'h_ak4ht_'+ itrig + '_eff_' + jtrig).Fill( ht, weight )
-
+        if getattr( event, self.reftrigger ) :
+            getattr(self, 'h_ak4ht_tot').Fill( ht, weight )
+            if any (  [getattr(event, x) for x in self.sigtriggers] ):
+                getattr(self, 'h_ak4ht_eff_tot').Fill( ht, weight )
 
         return True
 
