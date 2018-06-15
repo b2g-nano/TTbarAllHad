@@ -39,7 +39,6 @@ class TTbarResTrigsHadronic(Module):
         self.sigtriggers = [
             'HLT_AK8PFJet450',
             'HLT_AK8PFJet500',
-            'HLT_PFHT890',
             'HLT_PFHT1050',
             'HLT_AK8PFHT850_TrimMass50',
             'HLT_AK8PFHT900_TrimMass50',
@@ -95,9 +94,9 @@ class TTbarResTrigsHadronic(Module):
                 getattr(self, 'h_ak4ht_'+itrig).Fill( ht, weight )
                 if getattr( event, jtrig ) == 1: 
                     getattr(self, 'h_ak4ht_'+ itrig + '_eff_' + jtrig).Fill( ht, weight )
-        if getattr( event, self.reftrigger ) :
+        if getattr( event, self.reftrigger ) == 1 :
             getattr(self, 'h_ak4ht_tot').Fill( ht, weight )
-            if any (  [getattr(event, x) for x in self.sigtriggers] ):
+            if sum (  [getattr(event, x) for x in self.sigtriggers] ) > 0:
                 getattr(self, 'h_ak4ht_eff_tot').Fill( ht, weight )
 
         return True
