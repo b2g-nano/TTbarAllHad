@@ -5,6 +5,7 @@ This is a small script that submits a config over many datasets
 import os
 from optparse import OptionParser
 
+
 def make_list(option, opt, value, parser):
     setattr(parser.values, option.dest, value.split(','))
 
@@ -30,7 +31,9 @@ def getOptions() :
     parser.add_option("-l", "--lumiMask", dest="lumiMask",
         help=("Lumi Mask JSON file"),
         metavar="LUMIMASK")
-
+    parser.add_option("--lumiMask2", dest="lumiMask2",
+        help=("Lumi Mask JSON file for PREVIOUSLY processed events"),
+        metavar="LUMIMASK")
     (options, args) = parser.parse_args()
 
     if options.cfg == None or options.dir == None or options.datasets == None or options.storageSite == None:
@@ -48,6 +51,7 @@ def main():
 
     from CRABAPI.RawCommand import crabCommand
     from httplib import HTTPException
+    from WMCore.DataStructs.LumiList import LumiList
 
         
     # We want to put all the CRAB project directories from the tasks we submit here into one common directory.
@@ -111,8 +115,15 @@ def main():
           config.Data.unitsPerJob = 1
         elif datatier == 'MINIAOD': 
           config.Data.splitting = 'LumiBased'
-          config.Data.lumiMask = options.lumiMask
-          config.Data.unitsPerJob = 200
+          if options.lumiMask2 != None and options.lumiMask2 :
+              lumi1 = LumiList( options.lumiMask )
+              lumi2 = LumiList( options.lumiMask2 )
+              lumi = lumi1 - lumi2
+              lumi.writeJSON('extended_lumis.json')
+              config.Data.lumiMask = 'extended_lumis.json'
+          else :
+              config.Data.lumiMask = options.lumiMask
+          config.Data.unitsPerJob = 50
         print 'Submitting ' + config.General.requestName + ', dataset = ' + job
         print 'Configuration :'
         print config
