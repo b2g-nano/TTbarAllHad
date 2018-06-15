@@ -280,7 +280,13 @@ class TTbarResAnaHadronic(Module):
                 return False
 
             # Apply HT cut to ensure we are on the trigger plateau
-            ht = event.HT_pt
+            ht = 0.0
+            if hasattr( event, "HT_pt"):
+                ht = event.HT_pt
+            else :
+                for i in xrange( event.nJet ) :
+                    ht += event.Jet_pt[i]
+
             self.h_ak4ht[isys].Fill( ht, weight )
             if ht < self.htCut :
                 return False

@@ -97,7 +97,7 @@ def main():
         
         config.Data.userInputFiles = lfnList
         config.Data.splitting = 'FileBased'
-        config.Data.unitsPerJob = 50
+        config.Data.unitsPerJob = 5
       
         
         config.JobType.outputFiles = [ 'ttbarreshad_nanoskim.root' ]
