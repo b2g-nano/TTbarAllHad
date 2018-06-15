@@ -24,9 +24,11 @@ However this somehow used customization for MC from NANOAOD, so I adjusted that 
 
 ## Datasets
 
-Getting information from [here](https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2018Analysis#DATA). The good lumi list is
+Getting information from [here](https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2018Analysis#DATA). The first good lumi list is
 `/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/PromptReco/Cert_314472-317080_13TeV_PromptReco_Collisions18_JSON.txt`.
 
+The second good lumi list is:
+`Cert_314472-317391_13TeV_PromptReco_Collisions18_JSON.txt`
 
 Datasets available are:
 ```
@@ -46,4 +48,10 @@ Using my own custom submission script, I have:
 
 ```
 python submit_all.py -c test101X_NANO.py -f datasets_2018.txt -d NANO2018 -l Cert_314472-317080_13TeV_PromptReco_Collisions18_JSON.txt
+```
+
+Then, for part 2, I acquired the lumis that were not processed, and adjusted the "submit_all" script to subtract two lumi lists. 
+
+```
+python submit_all.py -c test101X_NANO.py -d NANO2018_extended -l Cert_314472-317391_13TeV_PromptReco_Collisions18_JSON.txt --lumiMask2 Cert_314472-317080_13TeV_PromptReco_Collisions18_JSON.txt -f datasets_2018.txt
 ```
