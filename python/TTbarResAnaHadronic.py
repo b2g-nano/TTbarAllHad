@@ -38,7 +38,7 @@ The 2-tag selection is:
 The ttbar candidate mass assumes the two leading top-tagged jets are the top quarks. 
 """
 class TTbarResAnaHadronic(Module):
-    def __init__(self, htCut=1100., minMSD=110., maxMSD=240., tau32Cut=0.6, ak8PtMin=400., bdisc=0.7, writePredDist=False, isData=False):
+    def __init__(self, htCut=1100., minMSD=110., maxMSD=240., tau32Cut=0.6, ak8PtMin=400., bdisc=0.7, writePredDist=False, isData=False, year='2016'):
         """ Initialization for the module 
         """
         self.htCut = htCut
@@ -50,6 +50,7 @@ class TTbarResAnaHadronic(Module):
         self.writePredDist = writePredDist
         self.writeHistFile = True
         self.isData = isData
+        self.year=year
         
         if not self.isData : 
             self.systs = [
@@ -101,8 +102,8 @@ class TTbarResAnaHadronic(Module):
 
         
         if not self.writePredDist:
-            self.predFile = ROOT.TFile( "ttbarreshad_predfile.root" )
-            self.hpred = [ self.predFile.Get( "ttbarres/preddist" + str(ibtag) ) for ibtag in xrange(len(self.btagcatvals))]
+            self.predFile = ROOT.TFile( "mistag/mistag_rates.root" )
+            self.hpred = [ self.predFile.Get( "mistagrate_" + str(iana) + '_' + self.year ) for iana in xrange(len(self.anacatvals))]
             # PredictedDistribution needs to own this to ensure it doesn't go out of scope.
             for iana in xrange(len(self.anacatvals)) :
                 ROOT.SetOwnership( self.hpred[iana], False )

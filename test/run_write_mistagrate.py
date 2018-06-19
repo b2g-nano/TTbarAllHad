@@ -40,7 +40,7 @@ print 'Input files are :'
 print inff
 
 #    inff = eos_get_rootfiles( '/store/user/rappocc/CRAB_UserFiles/' + dataset )
-p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.','',[TTbarResAnaHadronic(isData=True,year='2018')], provenance=True, histFileName='ttbarreshad_plots.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
+p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.','',[ttbarreshad_preddistwriter_data()], provenance=True, histFileName='ttbarreshad_predfile.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
 p1.run()
 
 
