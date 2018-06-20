@@ -12,9 +12,9 @@ from Analysis.TTbarAllHad.TTbarResAnaHadronic import *
 
 
 
-## mcsets = [
-##     'DijetSkim_Nrp_QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_94X'
-##     ]
+mcsets = [
+    'DijetSkim_Nrp_QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_94X'
+    ]
 
 ## datasets = [
 ##     'DijetSkim_Nrp_JetHT_Run2016B-07Aug17_ver2',
@@ -38,9 +38,8 @@ random.seed(12345)
 #print 'Input files are :'
 
 #print inff
-#inff = eos_get_rootfiles( '/store/user/rappocc/CRAB_UserFiles/' + dataset )
-inff = [
-    'root://cmsxrootd.fnal.gov//store/user/asparker/NanoAODJMARTools-skims/nanoskim-JetsandLepton-94XMC-TTToHadronic_TuneCP5_13TeV-powheg-pythia8-trees.root'
-    ]
-p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.','',[ttbarreshad_preddistwriter_data()], provenance=True, histFileName='mistag_TTToHadronic_TuneCP5_13TeV-powheg-pythia8_AntiTag.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
+
+for dataset in mcsets:
+    inff = eos_get_rootfiles( '/store/user/rappocc/CRAB_UserFiles/' + dataset )
+    p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.','',[TTbarResAnaHadronic(isData=False,year='2017')], provenance=True, histFileName='plots_QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_94X.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
 p1.run()
