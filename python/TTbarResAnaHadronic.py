@@ -245,6 +245,8 @@ class TTbarResAnaHadronic(Module):
         if len(ak8Jets) < 2 :
             return False
 
+        #print 'Have 2 jets'
+
         
         # Make the systematic variations.
         jetSysCollAK8 = JetSysColl(self.ak8JetsColl, self.systvals, sel = lambda x : x.jetId > 0)
@@ -262,6 +264,7 @@ class TTbarResAnaHadronic(Module):
         # Loop over systematic uncertainties. These may change the kinematics,
         # or the weights. Both need to be adjusted.
         for isys,sys in enumerate(self.systs) :
+            #print 'processing systematic : ', sys
             # Apply kinematic selection for this systematic. If no change, just use nominal. 
             ak8JetsSys = jetSysCollAK8[isys]
             
@@ -278,7 +281,7 @@ class TTbarResAnaHadronic(Module):
             
             # Must have two AK8 jets that pass jet ID and kinematic cuts. 
             if len(ak8JetsNdx) < 2 :
-                return False
+                continue
 
             # Apply HT cut to ensure we are on the trigger plateau
             ht = 0.0
@@ -291,12 +294,12 @@ class TTbarResAnaHadronic(Module):
             self.h_ak4ht[isys].Fill( ht, weight )
             if ht < self.htCut :
                 return False
+            ##print 'passed HT cut'
 
             # Get a list of the jets that are top-tagged (ttag)
             isTagged = [ self.passTopTag(ak8JetsSys[x]) for x in ak8JetsNdx ]
             isTaggedDict = dict( zip( ak8JetsNdx ,isTagged) )
 
-            
 
             # Make control plots
             for iak8Jet in ak8JetsNdx:
@@ -312,6 +315,9 @@ class TTbarResAnaHadronic(Module):
             iprobejet, itagjet = ak8JetsNdx[0:2]
             ttbarP4 =  ak8JetsSys[iprobejet].p4() + ak8JetsSys[itagjet].p4()
 
+            #print ' probe : %6.2f %6.2f %6.2f %6.2f ' % ( ak8JetsSys[iprobejet].p4().Perp(), ak8JetsSys[iprobejet].p4().Eta(), ak8JetsSys[iprobejet].p4().Phi(), ak8JetsSys[iprobejet].p4().M() )
+            #print '   tag : %6.2f %6.2f %6.2f %6.2f ' % ( ak8JetsSys[itagjet].p4().Perp(), ak8JetsSys[itagjet].p4().Eta(), ak8JetsSys[itagjet].p4().Phi(), ak8JetsSys[itagjet].p4().M() )
+
             # Find the analysis category: (0b,1b,2b) x (y<1,y>1)
             nbtag = min(2, sum( [ak8JetsSys[x].raw().btagCSVV2 > self.bdisc for x in [iprobejet,itagjet] ] ))
             yreg = 1 if abs( ak8JetsSys[iprobejet].p4().Rapidity() ) < 1.0 else 0
@@ -322,9 +328,7 @@ class TTbarResAnaHadronic(Module):
                 # If we are in the signal selection, require at least 1 ttag.
                 # Otherwise, we are vetoing the signal region
                 # to derive the mistag weight (anti-tag and probe).
-                if not self.writePredDist:
-                    return False
-                else:
+                if self.writePredDist:
                     # Here is the anti-ttag region selection to derive the mistag rate. 
                     if isys == self.nom:
                         self.preddist_den[anacat].Fill( ak8JetsSys[iprobejet].p4().P(), weight )
@@ -334,15 +338,18 @@ class TTbarResAnaHadronic(Module):
                             self.preddistrho_num[anacat].Fill( ak8JetsSys[iprobejet].p4().M() / ak8JetsSys[iprobejet].p4().Perp(), weight )
                         return True
 
-            # Here we have the actual signal region: 
-            if not self.writePredDist:
-                # Get the predicted background estimate
-                if isys == self.nom : 
-                    self.predJetP[anacat].Accumulate( ak8JetsSys[iprobejet].p4().P(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
-                    self.predJetMTTBAR[anacat].Accumulate( ttbarP4.M(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
-            # Now fill the double tagged histograms. 
-            if isTaggedDict[iprobejet] : 
-                self.h_mttbar[isys].Fill( ttbarP4.M(), weight )
+            else :
+                #print 'tag jet passed'
+                # Here we have the actual signal region: 
+                if not self.writePredDist:
+                    # Get the predicted background estimate
+                    if isys == self.nom : 
+                        self.predJetP[anacat].Accumulate( ak8JetsSys[iprobejet].p4().P(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
+                        self.predJetMTTBAR[anacat].Accumulate( ttbarP4.M(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
+                # Now fill the double tagged histograms. 
+                if isTaggedDict[iprobejet] :
+                    #print 'probe jet passed'
+                    self.h_mttbar[isys].Fill( ttbarP4.M(), weight )
 
         return True
 
