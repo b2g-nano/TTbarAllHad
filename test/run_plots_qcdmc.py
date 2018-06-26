@@ -9,11 +9,11 @@ from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetRecalib import *
 from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputFiles,runsAndLumis
 
 from Analysis.TTbarAllHad.TTbarResAnaHadronic import *
-
+from Analysis.TTbarAllHad.eos_get_rootfiles import *
 
 
 mcsets = [
-    'DijetSkim_Nrp_QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_94X'
+    'DijetSkim_Nrp_QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_94X_Uncs'
     ]
 
 ## datasets = [
