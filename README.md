@@ -15,19 +15,26 @@ cd Analysis/TTbarAllHad/test
 ln -s ../../../PhysicsTools/NanoAODTools/scripts/haddnano.py .
 ```
 ---
-## Interactive running:
-```
-python run_plots.py 0
-```
----
 ## Running trigger study and control plots
 
+
 ### 1: Make trigger histograms (interactively on cmslpc/lxplus)
+
+Main class is in [TTbarResTrigsHadronic.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResTrigsHadronic.py)
+
+Driver command is in [run_trigs.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/run_trigs.py)
+
 ```
 python run_trigs.py
 ```
 
 ### 2: Make control histograms (interactively on cmslpc/lxplus)
+
+Main class is in [TTbarResControlPlotsHadronic.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResControlPlotsHadronic.py)
+
+Driver command is in [run_controlplots.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/run_controlplots.py)
+
+
 ```
 python run_controlplots.py
 ```
@@ -45,7 +52,13 @@ Execute the python notebook [test/controlplots/control_plots.ipynb](https://gith
 
 ### 1: Create mistag rates in data (via CRAB)
 
-Run the crab script over all of the datasets in "datasets_jetht.txt".
+Main class is in [TTbarResAnaHadronic](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResAnaHadronic.py)
+
+Driver is [run_write_mistagrate.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/run_write_mistagrate.py)
+
+
+
+There is a crab script to run the crab script over all of the datasets in "datasets_jetht.txt".
 
 ```
 python submit_all_uif.py -c PSet.py -d WritePredDist -f datasets_jetht.txt
@@ -76,7 +89,11 @@ mv *AntiTag*.root mistag/
 
 The ttbar MC is small enough to execute interactively. We can skip
 the calculation of all of the uncertainties because it will be used
-only to subtract the ttbar MC from the mistag rates: 
+only to subtract the ttbar MC from the mistag rates:
+
+Main class is in [TTbarResControlPlotsHadronic.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResControlPlotsHadronic.py)
+
+Driver is [run_write_mistagrate_ttbarmc.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/run_write_mistagrate_ttbarmc.py)
 
 ```
 python run_write_mistagrate_ttbarmc.py
@@ -96,8 +113,19 @@ Execute the python notebook [test/mistag/mistag_rate.ipynb](https://github.com/b
 ### 4: Add uncertainties to QCD MC (via CRAB)
 
 Now we need to create new trees for the MCs, adding the jet-related
-uncertainties. 
+uncertainties. These are native NANOAOD tools. 
 
 ```
 python submit_rejec.py -c PSetMC.py -d Uncs -f datasets_qcd.txt -t Uncs
 ```
+
+---
+## Calculate the background estimate
+
+Main class is in [TTbarResAnaHadronic.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResAnaHadronic.py)
+
+Driver command is in [run_plots.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/run_plots.py)
+```
+python run_plots.py 0
+```
+---
