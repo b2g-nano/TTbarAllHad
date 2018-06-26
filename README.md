@@ -19,6 +19,26 @@ ln -s ../../../PhysicsTools/NanoAODTools/scripts/haddnano.py .
 python run_plots.py 0
 ```
 
+## Running trigger study and control plots
+
+### 1: Make trigger histograms (interactively on cmslpc/lxplus)
+```
+python run_trigs.py
+```
+
+### 2: Make control histograms (interactively on cmslpc/lxplus)
+```
+python run_controlplots.py
+```
+
+### 3: Plot trigger turnon (interactively on laptop)
+
+Execute the python notebook [test/trigs/trigger_calcs.ipynb](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/trigs/trigger_calcs.ipynb).
+
+### 3: Plot control plots (interactively on laptop)
+
+Execute the python notebook [test/controlplots/control_plots.ipynb](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/controlplots/control_plots.ipynb).
+
 ## Running main analysis background estimate
 
 ### 1: Create mistag rates in data (via CRAB)
