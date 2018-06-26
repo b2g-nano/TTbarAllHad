@@ -43,7 +43,7 @@ python run_controlplots.py
 
 Execute the python notebook [test/trigs/trigger_calcs.ipynb](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/trigs/trigger_calcs.ipynb).
 
-### 3: Plot control plots (interactively on laptop)
+### 4: Plot control plots (interactively on laptop)
 
 Execute the python notebook [test/controlplots/control_plots.ipynb](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/controlplots/control_plots.ipynb).
 
