@@ -1,3 +1,4 @@
+---
 # TTbarAllHad
 
 So far, this will compute the mistag rates for all the data.
@@ -13,12 +14,12 @@ scram b -j 10
 cd Analysis/TTbarAllHad/test
 ln -s ../../../PhysicsTools/NanoAODTools/scripts/haddnano.py .
 ```
-
+---
 ## Interactive running:
 ```
 python run_plots.py 0
 ```
-
+---
 ## Running trigger study and control plots
 
 ### 1: Make trigger histograms (interactively on cmslpc/lxplus)
@@ -39,6 +40,7 @@ Execute the python notebook [test/trigs/trigger_calcs.ipynb](https://github.com/
 
 Execute the python notebook [test/controlplots/control_plots.ipynb](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/controlplots/control_plots.ipynb).
 
+---
 ## Running main analysis background estimate
 
 ### 1: Create mistag rates in data (via CRAB)
