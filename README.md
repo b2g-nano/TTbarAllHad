@@ -28,7 +28,7 @@ Driver command is in [run_trigs.py](https://github.com/b2g-nano/TTbarAllHad/blob
 python run_trigs.py
 ```
 
-### 2: Make control histograms (interactively on cmslpc/lxplus)
+### 2: Make control histograms 
 
 Main class is in [TTbarResControlPlotsHadronic.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResControlPlotsHadronic.py)
 
@@ -37,6 +37,13 @@ Driver command is in [run_controlplots.py](https://github.com/b2g-nano/TTbarAllH
 
 ```
 python run_controlplots.py
+```
+
+Running on CRAB can be done by:
+
+```
+python submit.py -c PSet.py -d ControlPlots -f datasets_jetht_2018_rereco.txt -t ControlPlots --shscript crab_script_controlplots.sh --nanoscript run_controlplots.py -o ttbarreshad.root
+python submit.py -c PSet.py -d ControlPlots -f datasets_mc_2018_fall18.txt -t ControlPlotsMC --shscript crab_script_controlplots_mc.sh --nanoscript run_controlplots_mc.py -o ttbarreshad.root
 ```
 
 ### 3: Plot trigger turnon (interactively on laptop)
@@ -50,7 +57,7 @@ Execute the python notebook [test/controlplots/control_plots.ipynb](https://gith
 ---
 ## Running main analysis background estimate
 
-### 1: Create mistag rates in data (via CRAB)
+### 1: Create mistag rates in data
 
 Main class is in [TTbarResAnaHadronic](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResAnaHadronic.py)
 
@@ -58,10 +65,10 @@ Driver is [run_write_mistagrate.py](https://github.com/b2g-nano/TTbarAllHad/blob
 
 
 
-There is a crab script to run the crab script over all of the datasets in "datasets_jetht.txt".
-
+To run in CRAB:
 ```
-python submit_all_uif.py -c PSet.py -d WritePredDist -f datasets_jetht.txt
+python submit.py -c PSet.py -d WriteMistags -f datasets_jetht_2018_rereco.txt -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
+python submit.py -c PSet.py -d WriteMistags -f datasets_mc_2018_fall18.txt -t WriteMistagsMC --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
 ```
 
 Then hadd together the various crab files:
@@ -85,18 +92,21 @@ mv *AntiTag*.root mistag/
 ```
 
 
-### 2: Create mistag rates for ttbar MC (interactive on cmslpc/lxplus)
+### 2: Create mistag rates for ttbar MC
 
-The ttbar MC is small enough to execute interactively. We can skip
-the calculation of all of the uncertainties because it will be used
-only to subtract the ttbar MC from the mistag rates:
 
 Main class is in [TTbarResControlPlotsHadronic.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResControlPlotsHadronic.py)
 
 Driver is [run_write_mistagrate_ttbarmc.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/run_write_mistagrate_ttbarmc.py)
 
 ```
-python run_write_mistagrate_ttbarmc.py
+python run_write_mistagrate_mc.py
+```
+
+To run on CRAB:
+
+```
+python submit.py -c PSet.py -d WriteMistags -f datasets_mc_2018_fall18.txt -t WriteMistagsMC --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
 ```
 
 Move the resulting file to the mistag folder:

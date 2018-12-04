@@ -8,7 +8,7 @@ from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties im
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetRecalib import *
 from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputFiles,runsAndLumis
 
-from Analysis.TTbarAllHad.TTbarResAnaHadronic import *
+from Analysis.TTbarAllHad.TTbarResControlPlotsHadronic import *
 
 
 import random
@@ -19,9 +19,11 @@ print 'Input files are :'
 
 print inff
 
-
-idata = True
+idata = False
 iyear = '2018'
 
-p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.','',[TTbarResAnaHadronic(isData=idata,year=iyear)], provenance=True, histFileName='ttbarreshad.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
+
+p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 400. && FatJet_pt[1] > 400.','',
+                     [TTbarResControlPlotsHadronic(isData=idata,year=iyear)],
+                     provenance=True, histFileName='ttbarreshad.root', histDirName='ttbarres', noOut=True)
 p1.run()
