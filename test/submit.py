@@ -46,7 +46,9 @@ def getOptions() :
         help=("Site"),
         metavar="SITE")
 
-    
+    parser.add_option("-l", "--lumiMask", dest="lumiMask",
+        help=("Lumi Mask JSON file"),
+        metavar="LUMIMASK")
 
     (options, args) = parser.parse_args()
 
@@ -117,6 +119,8 @@ def main():
         config.Data.inputDataset = adataset
         config.Data.inputDBS = 'global'
         config.JobType.outputFiles = [ options.outfile ]
+        if options.lumiMask:
+            config.Data.lumiMask = options.lumiMask
 
         requestname = '_'.join( adataset.split('/')[0:3] )
         print 'requestname = ', requestname
