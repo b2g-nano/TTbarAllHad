@@ -95,7 +95,7 @@ mv *AntiTag*.root mistag/
 
 Main class is in [TTbarResAnaHadronic](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResAnaHadronic.py)
 
-Driver is [run_write_mistagrate_ttbarmc.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/run_write_mistagrate_ttbarmc.py)
+#Driver is [run_write_mistagrate_ttbarmc.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/run_write_mistagrate_ttbarmc.py)
 
 ```
 python run_write_mistagrate_mc.py
@@ -113,6 +113,16 @@ Move the resulting file to the mistag folder:
 mv mistag_TTToHadronic_TuneCP5_13TeV-powheg-pythia8_AntiTag.root mistags/
 ```
 
+
+### 3: Add files together:
+
+```
+cd hists/
+hadd ControlPlots_crab__JetHT_Run2016-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2016*.root
+hadd ControlPlots_crab__JetHT_Run2017-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2017*.root
+hadd ControlPlots_crab__JetHT_Run2018-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2018*.root
+
+```
 
 ### 3: Create the mistag rates and plots (interactive locally)
 
