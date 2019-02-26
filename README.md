@@ -4,8 +4,8 @@
 So far, this will compute the mistag rates for all the data.
 
 ```
-cmsrel CMSSW_9_4_4
-cd CMSSW_9_4_4/src
+cmsrel CMSSW_10_2_9
+cd CMSSW_10_2_9/src
 cmsenv
 git clone https://github.com/cms-nanoAOD/nanoAOD-tools.git PhysicsTools/NanoAODTools
 git clone https://github.com/b2g-nano/TTbarAllHad.git Analysis/TTbarAllHad
