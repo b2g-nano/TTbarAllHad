@@ -122,7 +122,7 @@ def main():
         if options.lumiMask:
             config.Data.lumiMask = options.lumiMask
 
-        requestname = '_'.join( adataset.split('/')[0:3] )
+        requestname = '_'.join( adataset.split('/')[0:3] )[0:100]
         print 'requestname = ', requestname
         config.General.requestName = requestname
         config.Data.outputDatasetTag = requestname + '_' + options.tag

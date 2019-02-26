@@ -16,7 +16,7 @@ import itertools
 for the ttbar all hadronic analysis. 
 """
 class TTbarResControlPlotsHadronic(Module):
-    def __init__(self, htCut=1100., minMSD=110., maxMSD=240., tau32Cut=0.6, ak8PtMin=400., bdisc=0.7, isData=False, year='2016'):
+    def __init__(self, htCut=1100., minMSD=110., maxMSD=240., tau32Cut=0.6, ak8PtMin=400., bdisc=0.7):
         """ Initialization for the module 
         """
         self.htCut = htCut
@@ -26,8 +26,6 @@ class TTbarResControlPlotsHadronic(Module):
         self.ak8PtMin = ak8PtMin
         self.bdisc = bdisc
         self.writeHistFile = True
-        self.isData = isData
-        self.year=year
         
     def beginJob(self, histFile, histDirName):
         """Book control histograms and the predictions for the background.
@@ -75,8 +73,7 @@ class TTbarResControlPlotsHadronic(Module):
         if hasattr( event, "HT_pt"):
             ht = event.HT_pt
         else :
-            for i in xrange( event.nJet ) :
-                ht += event.Jet_pt[i]
+            ht = sum([ event.Jet_pt[i] for i in range(event.nJet) ])
 
         self.h_ak4ht.Fill( ht, weight )
         if ht < self.htCut :
@@ -85,8 +82,7 @@ class TTbarResControlPlotsHadronic(Module):
 
         for jet in ak8Jets[0:1] : 
             self.h_ak8pt.Fill( jet.p4().Perp(), weight )
-            if jet.p4().Perp() > 400. :
-                
+            if jet.p4().Perp() > 400. :                
                 self.h_ak8msd.Fill( jet.msoftdrop, weight )
                 if jet.msoftdrop > 100. and jet.msoftdrop < 250. : 
                     self.h_ak8tau32.Fill( jet.tau3 / jet.tau2 if jet.tau2 > 0.0 else 0.0, weight )
@@ -100,4 +96,3 @@ class TTbarResControlPlotsHadronic(Module):
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
 ttbarreshad = lambda : TTbarResControlPlotsHadronic() 
-ttbarreshad_data = lambda : TTbarResControlPlotsHadronic(isData=True) 

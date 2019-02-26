@@ -3,7 +3,7 @@ process = cms.Process('NANO')
 process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(),
 )
 process.source.fileNames = [
-    '/store/data/Run2018A/JetHT/NANOAOD/14Sep2018_ver1-v1/60000/CF60DD31-A427-254C-B571-36FEED03C8E1.root'
+    '/store/data/Run2018B/JetHT/NANOAOD/Nano14Dec2018-v1/80000/0E8F10F1-30CA-4D4F-80EA-C9851CABC967.root'
 ]
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
 process.options = cms.untracked.PSet()

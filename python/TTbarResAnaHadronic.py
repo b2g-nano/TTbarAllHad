@@ -288,8 +288,7 @@ class TTbarResAnaHadronic(Module):
             if hasattr( event, "HT_pt"):
                 ht = event.HT_pt
             else :
-                for i in xrange( event.nJet ) :
-                    ht += event.Jet_pt[i]
+                ht = sum( [event.Jet_pt[i] for i in range(event.nJet)] )
 
             self.h_ak4ht[isys].Fill( ht, weight )
             if ht < self.htCut :

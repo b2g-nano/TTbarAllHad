@@ -13,17 +13,11 @@ from Analysis.TTbarAllHad.TTbarResControlPlotsHadronic import *
 
 import random
 random.seed(12345)
-
 inff = inputFiles()
 print 'Input files are :'
-
 print inff
 
-idata = True
-iyear = '2018'
-
-
 p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 400. && FatJet_pt[1] > 400.','',
-                     [TTbarResControlPlotsHadronic(isData=idata,year=iyear)],
+                     [TTbarResControlPlotsHadronic()],
                      provenance=True, histFileName='ttbarreshad.root', histDirName='ttbarres', noOut=True)
 p1.run()

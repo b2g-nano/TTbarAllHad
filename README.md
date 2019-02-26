@@ -42,8 +42,7 @@ python run_controlplots.py
 Running on CRAB can be done by:
 
 ```
-python submit.py -c PSet.py -d ControlPlots -f datasets_jetht_2018_rereco.txt -t ControlPlots --shscript crab_script_controlplots.sh --nanoscript run_controlplots.py -o ttbarreshad.root
-python submit.py -c PSet.py -d ControlPlots -f datasets_mc_2018_fall18.txt -t ControlPlotsMC --shscript crab_script_controlplots_mc.sh --nanoscript run_controlplots_mc.py -o ttbarreshad.root
+python submit.py -c PSet.py -d ControlPlots -f <dataset_file> -t ControlPlots --shscript crab_script_controlplots.sh --nanoscript run_controlplots.py -o ttbarreshad.root
 ```
 
 ### 3: Plot trigger turnon (interactively on laptop)
@@ -67,8 +66,7 @@ Driver is [run_write_mistagrate.py](https://github.com/b2g-nano/TTbarAllHad/blob
 
 To run in CRAB:
 ```
-python submit.py -c PSet.py -d WriteMistags -f datasets_jetht_2018_rereco.txt -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
-python submit.py -c PSet.py -d WriteMistags -f datasets_mc_2018_fall18.txt -t WriteMistagsMC --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
+python submit.py -c PSet.py -d WriteMistags -f <dataset_file> -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
 ```
 
 Then hadd together the various crab files:
@@ -95,7 +93,7 @@ mv *AntiTag*.root mistag/
 ### 2: Create mistag rates for ttbar MC
 
 
-Main class is in [TTbarResControlPlotsHadronic.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResControlPlotsHadronic.py)
+Main class is in [TTbarResAnaHadronic](https://github.com/b2g-nano/TTbarAllHad/blob/master/python/TTbarResAnaHadronic.py)
 
 Driver is [run_write_mistagrate_ttbarmc.py](https://github.com/b2g-nano/TTbarAllHad/blob/master/test/run_write_mistagrate_ttbarmc.py)
 
