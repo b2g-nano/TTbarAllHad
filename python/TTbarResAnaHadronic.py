@@ -38,7 +38,7 @@ The 2-tag selection is:
 The ttbar candidate mass assumes the two leading top-tagged jets are the top quarks. 
 """
 class TTbarResAnaHadronic(Module):
-    def __init__(self, htCut=1100., minMSD=110., maxMSD=240., tau32Cut=0.6, ak8PtMin=400., bdisc=0.7, writePredDist=False, isData=False, year='2016'):
+    def __init__(self, htCut=1100., minMSD=110., maxMSD=240., tau32Cut=0.6, ak8PtMin=400., bdisc=0.7, writePredDist=False, isData=False, year='2016', modMassFileName = None):
         """ Initialization for the module 
         """
         self.htCut = htCut
@@ -51,6 +51,11 @@ class TTbarResAnaHadronic(Module):
         self.writeHistFile = True
         self.isData = isData
         self.year=year
+        if modMassFileName is None:
+            self.modMassFile = ROOT.TFile("hists/ControlPlots_crab__QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_RunIIFall17NanoAODv4-PU2017_12Apr2018_Nano14Dec2018_102X.root")
+        else :
+            self.modMassFile = ROOT.TFile(modMassFileName)
+        self.modMass = self.modMassFile.Get("ttbarres/h_ak8msd")
         
         if not self.isData : 
             self.systs = [
@@ -313,6 +318,10 @@ class TTbarResAnaHadronic(Module):
             random.shuffle( ak8JetsNdx )
             iprobejet, itagjet = ak8JetsNdx[0:2]
             ttbarP4 =  ak8JetsSys[iprobejet].p4() + ak8JetsSys[itagjet].p4()
+            modMass = self.hmodMass.GetRandom()
+            modMassP4 = ak8JetsSys[itagjet].p4()
+            modMassP4.SetPtEtaPhiM( modMassP4.pt(), modMassP4.eta(), modMassP4.phi(), modMass )
+            modMass_ttbarP4 = ak8JetsSys[iprobejet].p4() + modMassP4
 
             #print ' probe : %6.2f %6.2f %6.2f %6.2f ' % ( ak8JetsSys[iprobejet].p4().Perp(), ak8JetsSys[iprobejet].p4().Eta(), ak8JetsSys[iprobejet].p4().Phi(), ak8JetsSys[iprobejet].p4().M() )
             #print '   tag : %6.2f %6.2f %6.2f %6.2f ' % ( ak8JetsSys[itagjet].p4().Perp(), ak8JetsSys[itagjet].p4().Eta(), ak8JetsSys[itagjet].p4().Phi(), ak8JetsSys[itagjet].p4().M() )
@@ -345,6 +354,7 @@ class TTbarResAnaHadronic(Module):
                     if isys == self.nom : 
                         self.predJetP[anacat].Accumulate( ak8JetsSys[iprobejet].p4().P(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
                         self.predJetMTTBAR[anacat].Accumulate( ttbarP4.M(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
+                        self.predJetMTTBARMod[anacat].Accumulate( modMass_ttbarP4.M(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
                 # Now fill the double tagged histograms. 
                 if isTaggedDict[iprobejet] :
                     #print 'probe jet passed'

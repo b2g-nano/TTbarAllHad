@@ -36,7 +36,9 @@ class TTbarResControlPlotsHadronic(Module):
         Module.beginJob(self, histFile, histDirName)
         self.addObject ( ROOT.TH1F('h_ak4ht',   'h_ak4ht',   25, 0, 5000) )
         self.addObject ( ROOT.TH1F('h_ak8pt',   'h_ak8pt',   25, 0, 2500) )
+        self.addObject ( ROOT.TH1F('h_ak8m',    'h_ak8m',    25, 0, 500) )
         self.addObject ( ROOT.TH1F('h_ak8msd',  'h_ak8msd',  25, 0, 500) )
+        self.addObject ( ROOT.TH1F('h_ak8m_mod','h_ak8m_mod',25, 0, 500) )
         self.addObject ( ROOT.TH1F('h_ak8tau32','h_ak8tau32',25, 0, 1.0) )
         self.addObject ( ROOT.TH1F('h_ak8n3b1', 'h_ak8n3b1', 25, 0, 5.0) )
         self.addObject ( ROOT.TH1F('h_mttbar',  'h_mttbar',  25, 0, 5000) )
@@ -80,6 +82,7 @@ class TTbarResControlPlotsHadronic(Module):
             return False
         ##print 'passed HT cut'
 
+        
         for jet in ak8Jets[0:1] : 
             self.h_ak8pt.Fill( jet.p4().Perp(), weight )
             if jet.p4().Perp() > 400. :                
@@ -90,6 +93,14 @@ class TTbarResControlPlotsHadronic(Module):
 
         ttbarP4 =  ak8Jets[0].p4() + ak8Jets[1].p4()
         self.h_mttbar.Fill( ttbarP4.M(), weight )
+
+        indices = random.shuffle( [0,1] )
+        itagJet = indices[0]
+        iprobeJet = indices[1]
+        tau32 = ak8Jets[itagJet].tau3 / ak8Jets[itagJet].tau2 if ak8Jets[itagJet].tau2 > 0.0 else 0.0
+        if 140 < ak8Jets[itagJet].msoftdrop < 240 and tau32 < 0.6 :
+            self.h_ak8m_mod.Fill( ak8Jets[iprobeJet].M() )
+        
 
         return True
 
