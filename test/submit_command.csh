@@ -1,4 +1,4 @@
-python submit.py -c PSet.py -d WriteMistags -f datasets_jetht_13TeV_Nano14Dec2018.txt -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root -l all_goodruns_13TeV.txt
-python submit.py -c PSet.py -d WriteMistags -f datasets_all_Nano14Dec2018.txt -t WriteMistagsMC --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
-python submit.py -c PSet.py -d ControlPlots -f datasets_jetht_13TeV_Nano14Dec2018.txt -t ControlPlots --shscript crab_script_controlplots.sh --nanoscript run_controlplots.py -o ttbarreshad.root -l all_goodruns_13TeV.txt
-python submit.py -c PSet.py -d ControlPlots -f datasets_all_Nano14Dec2018.txt -t ControlPlotsMC --shscript crab_script_controlplots.sh --nanoscript run_controlplots.py -o ttbarreshad.root
+python submit.py -c PSet.py -d WriteMistags -f datasets/datasets_jetht_13TeV_Nano14Dec2018.txt -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root -l all_goodruns_13TeV.txt
+python submit.py -c PSet.py -d WriteMistags -f datasets/datasets_all_Nano14Dec2018.txt -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
+python submit.py -c PSet.py -d ControlPlots -f datasets/datasets_jetht_13TeV_Nano14Dec2018.txt -t ControlPlots --shscript crab_script_controlplots.sh --nanoscript run_controlplots.py -o ttbarreshad.root -l all_goodruns_13TeV.txt
+python submit.py -c PSet.py -d ControlPlots -f datasets/datasets_all_Nano14Dec2018.txt -t ControlPlots --shscript crab_script_controlplots.sh --nanoscript run_controlplots.py -o ttbarreshad.root
