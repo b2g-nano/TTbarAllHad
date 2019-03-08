@@ -52,10 +52,21 @@ class TTbarResAnaHadronic(Module):
         self.isData = isData
         self.year=year
         if modMassFileName is None:
-            self.modMassFile = ROOT.TFile("hists/ControlPlots_crab__QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_RunIIFall17NanoAODv4-PU2017_12Apr2018_Nano14Dec2018_102X.root")
+            self.modMassFile = ROOT.TFile("modmass.root")
         else :
             self.modMassFile = ROOT.TFile(modMassFileName)
-        self.modMass = self.modMassFile.Get("ttbarres/h_ak8msd")
+        self.modMass = self.modMassFile.Get("ttbarres/h_ak8m_mod")
+
+        # Zero out everything except the mass region of the tag to ensure unbiased kinematics.
+        # This is the "mass modified" procedure.
+        xmin = self.modMass.GetXaxis().FindBin(140.)
+        xmax = self.modMass.GetXaxis().FindBin(240.)
+        for ibin in range(0,xmin):
+            self.modMass.SetBinContent(ibin,0)
+            self.modMass.SetBinError(ibin,0)
+        for ibin in range(xmax, self.modMass.GetNbinsX()+1):
+            self.modMass.SetBinContent(ibin,0)
+            self.modMass.SetBinError(ibin,0)
         
         if not self.isData : 
             self.systs = [
@@ -107,7 +118,7 @@ class TTbarResAnaHadronic(Module):
 
         
         if not self.writePredDist:
-            self.predFile = ROOT.TFile( "mistag/mistag_rates.root" )
+            self.predFile = ROOT.TFile( "mistag_rates.root" )
             self.hpred = [ self.predFile.Get( "mistagrate_" + str(iana) + '_' + self.year ) for iana in xrange(len(self.anacatvals))]
             # PredictedDistribution needs to own this to ensure it doesn't go out of scope.
             for iana in xrange(len(self.anacatvals)) :
@@ -318,9 +329,9 @@ class TTbarResAnaHadronic(Module):
             random.shuffle( ak8JetsNdx )
             iprobejet, itagjet = ak8JetsNdx[0:2]
             ttbarP4 =  ak8JetsSys[iprobejet].p4() + ak8JetsSys[itagjet].p4()
-            modMass = self.hmodMass.GetRandom()
+            modMass = self.modMass.GetRandom()
             modMassP4 = ak8JetsSys[itagjet].p4()
-            modMassP4.SetPtEtaPhiM( modMassP4.pt(), modMassP4.eta(), modMassP4.phi(), modMass )
+            modMassP4.SetPtEtaPhiM( modMassP4.Perp(), modMassP4.Eta(), modMassP4.Phi(), modMass )
             modMass_ttbarP4 = ak8JetsSys[iprobejet].p4() + modMassP4
 
             #print ' probe : %6.2f %6.2f %6.2f %6.2f ' % ( ak8JetsSys[iprobejet].p4().Perp(), ak8JetsSys[iprobejet].p4().Eta(), ak8JetsSys[iprobejet].p4().Phi(), ak8JetsSys[iprobejet].p4().M() )

@@ -105,7 +105,7 @@ def main():
         adataset = job.rstrip()
 
         config.JobType.scriptExe = options.shscript
-        config.JobType.inputFiles = [options.cfg ,options.shscript, options.nanoscript ,'./haddnano.py', 'keep_and_drop.txt', 'FrameworkJobReport.xml']
+        config.JobType.inputFiles = [options.cfg ,options.shscript, options.nanoscript ,'./haddnano.py', 'keep_and_drop.txt', 'FrameworkJobReport.xml', 'mistag_rates.root', 'modmass.root']
         config.JobType.sendPythonFolder  = True
         
         #lfnList = eos_get_rootfiles( adataset )
