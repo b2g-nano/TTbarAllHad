@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+hadd -f ControlPlots_crab__JetHT_Run2016-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2016B_ver2-Nano14Dec2018_ver2-v1.root ControlPlots_crab__JetHT_Run2016C-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2016D-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2016E-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2016F-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2016G-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2016H-Nano14Dec2018-v1.root
+
+hadd -f ControlPlots_crab__JetHT_Run2017-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2017B-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2017C-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2017D-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2017E-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2017F-Nano14Dec2018-v1.root 
+
+hadd -f ControlPlots_crab__JetHT_Run2018-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2018A-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2018B-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2018C-Nano14Dec2018-v1.root ControlPlots_crab__JetHT_Run2018D-Nano14Dec2018_ver2-v1.root
+

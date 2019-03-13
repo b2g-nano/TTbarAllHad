@@ -103,9 +103,9 @@ class TTbarResControlPlotsHadronic(Module):
         iprobeJet = indices[1]
         tau32 = ak8Jets[itagJet].tau3 / ak8Jets[itagJet].tau2 if ak8Jets[itagJet].tau2 > 0.0 else 0.0
         if self.minMSD < ak8Jets[itagJet].msoftdrop < self.maxMSD and tau32 < self.tau32Cut :
-            self.h_ak8m_mod.Fill( ak8Jets[iprobeJet].mass )
+            self.h_ak8m_mod.Fill( ak8Jets[iprobeJet].mass, weight )
             if ak8Jets[itagJet].btagCSVV2 < self.bdisc:
-                self.h_ak8m_modb.Fill( ak8Jets[iprobeJet].mass )
+                self.h_ak8m_modb.Fill( ak8Jets[iprobeJet].mass, weight )
         
 
         return True
