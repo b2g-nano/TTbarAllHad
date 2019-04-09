@@ -19,6 +19,6 @@ print 'Input files are :'
 
 print inff
 
-p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 350. && FatJet_pt[1] > 350.','',[ttbarreshad_preddistwriter_data()], provenance=True, histFileName='ttbarreshad.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
+p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 400. && FatJet_pt[1] > 400.','',[ttbarreshad_preddistwriter_data()], provenance=True, histFileName='ttbarreshad.root', histDirName='ttbarres', noOut=True)#, haddFileName = 'ttbarreshad_nanoskim.root')
 p1.run()
 

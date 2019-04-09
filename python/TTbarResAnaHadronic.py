@@ -94,6 +94,10 @@ class TTbarResAnaHadronic(Module):
         for ianacat,anacat in enumerate(self.anacats):
             setattr( self, anacat, ianacat )
             self.anacatvals.append( getattr(self,anacat) )
+            
+        self.systs_anacats = [ a + '__' + s for s,a in itertools.product( self.systs, self.anacats ) ]
+
+        print self.systs_anacats
 
     def formcat(self, nbtag, ycat ):
         """Form analysis category based on nbtag and ycat.
@@ -101,6 +105,9 @@ class TTbarResAnaHadronic(Module):
         """
         anacat = nbtag * len(self.ycats) + ycat
         return anacat
+
+    def formsyscat( self, syst, nbtag, ycat ):
+        return (nbtag * len(self.ycats) + ycat) * len(self.systvals) + syst
         
     def beginJob(self, histFile, histDirName):
         """Book control histograms and the predictions for the background.
@@ -109,13 +116,37 @@ class TTbarResAnaHadronic(Module):
         by the mistag rate to extrapolate to the 2-tag region. 
         """
         Module.beginJob(self, histFile, histDirName)
-        self.addObjectList (self.systs, ROOT.TH1F('h_ak4ht',   'h_ak4ht',   25, 0, 5000) )
-        self.addObjectList (self.systs, ROOT.TH1F('h_ak8pt',   'h_ak8pt',   25, 0, 2500) )
-        self.addObjectList (self.systs, ROOT.TH1F('h_ak8msd',  'h_ak8msd',  25, 0, 500) )
-        self.addObjectList (self.systs, ROOT.TH1F('h_ak8tau32','h_ak8tau32',25, 0, 1.0) )
-        self.addObjectList (self.systs, ROOT.TH1F('h_ak8n3b1', 'h_ak8n3b1', 25, 0, 5.0) )
-        self.addObjectList (self.systs, ROOT.TH1F('h_mttbar',  'h_mttbar',  25, 0, 5000) )
 
+
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_ak4ht',    'h_ak4ht',    100, 0, 5000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_ak8pt',    'h_ak8pt',    100, 0, 2500) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_ak8msd',   'h_ak8msd',   100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_ak8m',     'h_ak8m',     100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_ak8m_mod', 'h_ak8m_mod', 100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_ak8m_modb','h_ak8m_modb',100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_ak8tau32', 'h_ak8tau32', 100, 0, 1.0) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_ak8n3b1',  'h_ak8n3b1',  100, 0, 5.0) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_mttbar',   'h_mttbar',   100, 0, 5000) )
+
+        if not self.writePredDist:
+            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8pt',    'h_tagjet_ak8pt',    100, 0, 2500) )
+            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8msd',   'h_tagjet_ak8msd',   100, 0, 1000) )
+            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8m',     'h_tagjet_ak8m',     100, 0, 1000) )
+            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8tau32', 'h_tagjet_ak8tau32', 100, 0, 1.0) )
+            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8n3b1',  'h_tagjet_ak8n3b1',  100, 0, 5.0) )
+        else:
+            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8pt',    'h_antitagjet_ak8pt',    100, 0, 2500) )
+            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8msd',   'h_antitagjet_ak8msd',   100, 0, 1000) )
+            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8m',     'h_antitagjet_ak8m',     100, 0, 1000) )
+            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8tau32', 'h_antitagjet_ak8tau32', 100, 0, 1.0) )
+            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8n3b1',  'h_antitagjet_ak8n3b1',  100, 0, 5.0) )
+        
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_probejet_ak8pt',    'h_probejet_ak8pt',    100, 0, 2500) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_probejet_ak8msd',   'h_probejet_ak8msd',   100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_probejet_ak8m',     'h_probejet_ak8m',     100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_probejet_ak8tau32', 'h_probejet_ak8tau32', 100, 0, 1.0) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_probejet_ak8n3b1',  'h_probejet_ak8n3b1',  100, 0, 5.0) )
+        
         
         if not self.writePredDist:
             self.predFile = ROOT.TFile( "mistag_rates.root" )
@@ -123,28 +154,16 @@ class TTbarResAnaHadronic(Module):
             # PredictedDistribution needs to own this to ensure it doesn't go out of scope.
             for iana in xrange(len(self.anacatvals)) :
                 ROOT.SetOwnership( self.hpred[iana], False )
-                self.addObject( ROOT.PredictedDistribution(self.hpred[iana], "predJetP"+str(iana),        "Jet p_{T} (GeV), cat="+str(iana),   30, 0.0, 3000.) )
-                self.addObject( ROOT.PredictedDistribution(self.hpred[iana], "predJetMTTBAR"+str(iana),   "M_{TTBAR} (GeV), cat="+str(iana),   50, 0.0, 5000.))
-                self.addObject( ROOT.PredictedDistribution(self.hpred[iana], "predJetMTTBARMod"+str(iana),"M_{TTBAR} (GeV), cat="+str(iana),   50, 0.0, 5000.))
-                self.addObject( ROOT.PredictedDistribution(self.hpred[iana], "predJetSDMass"+str(iana),    "Soft Drop Mass, cat="+str(iana),   50, 0.0, 250.))
-                self.addObject( ROOT.PredictedDistribution(self.hpred[iana], "predJetMass"+str(iana),  "Ungroomed Jet Mass, cat="+str(iana),   50, 0.0, 250.))
-                self.addObject( ROOT.PredictedDistribution(self.hpred[iana], "predJetMassMod"+str(iana), "Ungroomed Jet Mass, cat="+str(iana), 50, 0.0, 250.))
-                self.addObject( ROOT.PredictedDistribution(self.hpred[iana], "predJetSDRho"+str(iana),        "Soft Drop Rho, cat="+str(iana), 50, 0.0, 1.))
+                self.addObject( ROOT.PredictedDistribution(self.hpred[iana], "predJetP"+str(iana),        "Jet p_{T} (GeV), cat="+str(iana),   100, 0.0, 3000.) )
+                self.addObject( ROOT.PredictedDistribution(self.hpred[iana], "predJetMTTBAR"+str(iana),   "M_{TTBAR} (GeV), cat="+str(iana),   100, 0.0, 5000.))
+                self.addObject( ROOT.PredictedDistribution(self.hpred[iana], "predJetMTTBARMod"+str(iana),"M_{TTBAR} (GeV), cat="+str(iana),   100, 0.0, 5000.))
             self.predJetP         = [ getattr( self, "predJetP"         + str (iana)) for iana in xrange(len(self.anacatvals))]
             self.predJetMTTBAR    = [ getattr( self, "predJetMTTBAR"    + str (iana)) for iana in xrange(len(self.anacatvals))]
             self.predJetMTTBARMod = [ getattr( self, "predJetMTTBARMod" + str (iana)) for iana in xrange(len(self.anacatvals))]
-            self.predJetSDMass    = [ getattr( self, "predJetSDMass"    + str (iana)) for iana in xrange(len(self.anacatvals))]
-            self.predJetMass      = [ getattr( self, "predJetMass"      + str (iana)) for iana in xrange(len(self.anacatvals))]
-            self.predJetMassMod   = [ getattr( self, "predJetMassMod"   + str (iana)) for iana in xrange(len(self.anacatvals))]
-            self.predJetSDRho     = [ getattr( self, "predJetSDRho"     + str (iana)) for iana in xrange(len(self.anacatvals))]
 
             # PredictedDistribution needs to own these also.
             for cat in self.anacatvals : 
-                for hist in [
-                        self.predJetP[cat], self.predJetMTTBAR[cat],
-                        self.predJetMTTBARMod[cat],
-                        self.predJetSDMass[cat], self.predJetMass[cat], self.predJetMassMod[cat],
-                        self.predJetSDRho[cat] ] : 
+                for hist in [self.predJetP[cat], self.predJetMTTBAR[cat],self.predJetMTTBARMod[cat] ] : 
                     ROOT.SetOwnership( hist, False )
         else:
             for iana in xrange(len(self.anacatvals)):
@@ -163,11 +182,7 @@ class TTbarResAnaHadronic(Module):
         """
         if not self.writePredDist:
             for cat in self.anacatvals : 
-                for hist in [
-                        self.predJetP[cat], self.predJetMTTBAR[cat],
-                        self.predJetMTTBARMod[cat],
-                        self.predJetSDMass[cat], self.predJetMass[cat], self.predJetMassMod[cat],
-                        self.predJetSDRho[cat] ] : 
+                for hist in [self.predJetP[cat], self.predJetMTTBAR[cat],self.predJetMTTBARMod[cat] ] : 
                     hist.SetCalculatedErrors()
         Module.endJob(self)
         pass
@@ -184,7 +199,13 @@ class TTbarResAnaHadronic(Module):
         passMSD = jet.msd() != None and self.minMSD < jet.msd() < self.maxMSD
         return passTau32 and passMSD
 
-
+    def passTopAntiTag(self, jet):
+        """Selects *anti-tagged* jets that satisfy the mass requirement but fail the tau32 cut.
+        """
+        tau32 = jet.raw().tau3 / jet.raw().tau2 if jet.raw().tau2 > 0.0 else 0.
+        passAntiTau32 = tau32 > self.tau32Cut 
+        passMSD = jet.msd() != None and self.minMSD < jet.msd() < self.maxMSD
+        return passAntiTau32 and passMSD
     
     def deriveWeights(self):
         """Derives all of the weights used that do not adjust the 4-vectors in the event.         
@@ -256,15 +277,8 @@ class TTbarResAnaHadronic(Module):
         # Get the collections of AK4 and AK8 jets
         self.ak8JetsColl = Collection(event, "FatJet")
 
-        # Select the jets that satisfy jet ID. 
-        ak8Jets = [ x for x in self.ak8JetsColl if x.jetId > 0 ]
-        if len(ak8Jets) < 2 :
-            return False
-
-        #print 'Have 2 jets'
-
         
-        # Make the systematic variations.
+        # Make the systematic variations. Ignore jets that do not pass ID cuts. 
         jetSysCollAK8 = JetSysColl(self.ak8JetsColl, self.systvals, sel = lambda x : x.jetId > 0)
                 
         # Derive the kinematic systematic effects. In this case,
@@ -306,7 +320,6 @@ class TTbarResAnaHadronic(Module):
             else :
                 ht = sum( [event.Jet_pt[i] for i in range(event.nJet)] )
 
-            self.h_ak4ht[isys].Fill( ht, weight )
             if ht < self.htCut :
                 return False
             ##print 'passed HT cut'
@@ -316,60 +329,97 @@ class TTbarResAnaHadronic(Module):
             isTaggedDict = dict( zip( ak8JetsNdx ,isTagged) )
 
 
-            # Make control plots
-            for iak8Jet in ak8JetsNdx:
-                jet = ak8JetsSys[iak8Jet]
-                raw = jetSysCollAK8.jets_raw()[iak8Jet]
-                self.h_ak8pt[isys].Fill( jet.p4().Perp(), weight )                
-                self.h_ak8msd[isys].Fill( jet.msd(), weight )
-                self.h_ak8tau32[isys].Fill( raw.tau3 / raw.tau2 if raw.tau2 > 0.0 else 0.0, weight )
-                self.h_ak8n3b1[isys].Fill( raw.n3b1, weight )
+            #print ' probe : %6.2f %6.2f %6.2f %6.2f ' % ( ak8JetsSys[iprobejet].p4().Perp(), ak8JetsSys[iprobejet].p4().Eta(), ak8JetsSys[iprobejet].p4().Phi(), ak8JetsSys[iprobejet].p4().M() )
+            #print '   tag : %6.2f %6.2f %6.2f %6.2f ' % ( ak8JetsSys[itagjet].p4().Perp(), ak8JetsSys[itagjet].p4().Eta(), ak8JetsSys[itagjet].p4().Phi(), ak8JetsSys[itagjet].p4().M() )
 
             # Get a randomly assigned tag and probe jet from the leading two jets
             random.shuffle( ak8JetsNdx )
             iprobejet, itagjet = ak8JetsNdx[0:2]
-            ttbarP4 =  ak8JetsSys[iprobejet].p4() + ak8JetsSys[itagjet].p4()
-            modMass = self.modMass.GetRandom()
-            modMassP4 = ak8JetsSys[itagjet].p4()
-            modMassP4.SetPtEtaPhiM( modMassP4.Perp(), modMassP4.Eta(), modMassP4.Phi(), modMass )
-            modMass_ttbarP4 = ak8JetsSys[iprobejet].p4() + modMassP4
-
-            #print ' probe : %6.2f %6.2f %6.2f %6.2f ' % ( ak8JetsSys[iprobejet].p4().Perp(), ak8JetsSys[iprobejet].p4().Eta(), ak8JetsSys[iprobejet].p4().Phi(), ak8JetsSys[iprobejet].p4().M() )
-            #print '   tag : %6.2f %6.2f %6.2f %6.2f ' % ( ak8JetsSys[itagjet].p4().Perp(), ak8JetsSys[itagjet].p4().Eta(), ak8JetsSys[itagjet].p4().Phi(), ak8JetsSys[itagjet].p4().M() )
-
+            tagjet = ak8JetsSys[itagjet]
+            tagraw = jetSysCollAK8.jets_raw()[itagjet]
+            probejet = ak8JetsSys[iprobejet]
+            proberaw = jetSysCollAK8.jets_raw()[iprobejet]            
+                
             # Find the analysis category: (0b,1b,2b) x (y<1,y>1)
-            nbtag = min(2, sum( [ak8JetsSys[x].raw().btagCSVV2 > self.bdisc for x in [iprobejet,itagjet] ] ))
-            yreg = 1 if abs( ak8JetsSys[iprobejet].p4().Rapidity() ) < 1.0 else 0
+            nbtag = min(2, sum( [x.btagCSVV2 > self.bdisc for x in [proberaw, tagraw] ] ))
+            yreg = 1 if abs( probejet.p4().Rapidity() ) > 1.0 else 0
             anacat = self.formcat( nbtag, yreg )
+            isyscat = self.formsyscat( isys, nbtag, yreg )
 
+            # Require a back-to-back topology
+            if abs( tagjet.p4().DeltaPhi( probejet.p4() ) ) < 2.1 :
+                continue
+
+
+            # Make control plots
+            for iak8Jet in ak8JetsNdx:
+                jet = ak8JetsSys[iak8Jet]
+                raw = jetSysCollAK8.jets_raw()[iak8Jet]
+                self.h_ak8pt[isyscat].Fill( jet.p4().Perp(), weight )                
+                self.h_ak8msd[isyscat].Fill( jet.msd(), weight )
+                self.h_ak8tau32[isyscat].Fill( raw.tau3 / raw.tau2 if raw.tau2 > 0.0 else 0.0, weight )
+                self.h_ak8n3b1[isyscat].Fill( raw.n3b1, weight )
+
+
+
+
+            
+            # Check if the event is an anti-tag + probe case. In that case we fill the mistag rate. 
+            if self.writePredDist and isys == self.nom and self.passTopAntiTag(tagjet) :
+
+                # Here are some control plots
+                self.h_antitagjet_ak8pt[isyscat].Fill( tagjet.p4().Perp(), weight )                
+                self.h_antitagjet_ak8msd[isyscat].Fill( tagjet.msd(), weight )
+                self.h_antitagjet_ak8m[isyscat].Fill( tagjet.p4().M(), weight )
+                self.h_antitagjet_ak8tau32[isyscat].Fill( tagraw.tau3 / tagraw.tau2 if tagraw.tau2 > 0.0 else 0.0, weight )
+                self.h_antitagjet_ak8n3b1[isyscat].Fill( tagraw.n3b1, weight )
+
+                # This is the denominator of the predicted distribution
+                self.preddist_den[anacat].Fill( probejet.p4().P(), weight )
+                self.preddistrho_den[anacat].Fill( probejet.msd() / probejet.p4().Perp(), weight )
+
+                # This is the numerator of the predicted distribution, plus control plots
+                if self.passTopTag( ak8JetsSys[iprobejet] ):
+                    self.preddist_num[anacat].Fill( probejet.p4().P(), weight )
+                    self.preddistrho_num[anacat].Fill( probejet.msd() / probejet.p4().Perp(), weight )
+                    self.h_probejet_ak8pt[isyscat].Fill( probejet.p4().Perp(), weight )                
+                    self.h_probejet_ak8msd[isyscat].Fill( probejet.msd(), weight )
+                    self.h_probejet_ak8m[isyscat].Fill( probejet.p4().M(), weight )
+                    self.h_probejet_ak8tau32[isyscat].Fill( proberaw.tau3 / proberaw.tau2 if proberaw.tau2 > 0.0 else 0.0, weight )
+                    self.h_probejet_ak8n3b1[isyscat].Fill( proberaw.n3b1, weight )                    
+
+                return True
+                    
             # Check if we have >=1 ttag
-            if not self.passTopTag(ak8JetsSys[itagjet]) :
-                # If we are in the signal selection, require at least 1 ttag.
-                # Otherwise, we are vetoing the signal region
-                # to derive the mistag weight (anti-tag and probe).
-                if self.writePredDist:
-                    # Here is the anti-ttag region selection to derive the mistag rate. 
-                    if isys == self.nom:
-                        self.preddist_den[anacat].Fill( ak8JetsSys[iprobejet].p4().P(), weight )
-                        self.preddistrho_den[anacat].Fill( ak8JetsSys[iprobejet].p4().M() / ak8JetsSys[iprobejet].p4().Perp(), weight )
-                        if self.passTopTag( ak8JetsSys[iprobejet] ):
-                            self.preddist_num[anacat].Fill( ak8JetsSys[iprobejet].p4().P(), weight )
-                            self.preddistrho_num[anacat].Fill( ak8JetsSys[iprobejet].p4().M() / ak8JetsSys[iprobejet].p4().Perp(), weight )
-                        return True
+            if not self.writePredDist and self.passTopTag(tagjet) :
+                ttbarP4 =  probejet.p4() + tagjet.p4()
+                modMass = self.modMass.GetRandom()
+                modMassP4 = ROOT.TLorentzVector()
+                modMassP4.SetPtEtaPhiM( probejet.Perp(), probejet.Eta(), probejet.Phi(), modMass )
+                modMass_ttbarP4 = tagjet + modMassP4                    
 
-            else :
-                #print 'tag jet passed'
-                # Here we have the actual signal region: 
-                if not self.writePredDist:
-                    # Get the predicted background estimate
-                    if isys == self.nom : 
-                        self.predJetP[anacat].Accumulate( ak8JetsSys[iprobejet].p4().P(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
-                        self.predJetMTTBAR[anacat].Accumulate( ttbarP4.M(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
-                        self.predJetMTTBARMod[anacat].Accumulate( modMass_ttbarP4.M(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
-                # Now fill the double tagged histograms. 
+                
+                if isys == self.nom :                    
+                    self.predJetP[anacat].Accumulate( probejet.p4().P(), probejet.p4().P(), isTaggedDict[iprobejet], weight )
+                    self.predJetMTTBAR[anacat].Accumulate( ttbarP4.M(), probejet.p4().P(), isTaggedDict[iprobejet], weight )
+                    self.predJetMTTBARMod[anacat].Accumulate( modMass_ttbarP4.M(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
+                    self.h_tagjet_ak8pt[isyscat].Fill( tagjet.p4().Perp(), weight )                
+                    self.h_tagjet_ak8msd[isyscat].Fill( tagjet.msd(), weight )
+                    self.h_tagjet_ak8m[isyscat].Fill( tagjet.p4().M(), weight )
+                    self.h_tagjet_ak8tau32[isyscat].Fill( tagraw.tau3 / tagraw.tau2 if tagraw.tau2 > 0.0 else 0.0, weight )
+                    self.h_tagjet_ak8n3b1[isyscat].Fill( tagraw.n3b1, weight )
+                # Here we have the actual signal region. Fill the double tagged histograms. 
                 if isTaggedDict[iprobejet] :
-                    #print 'probe jet passed'
-                    self.h_mttbar[isys].Fill( ttbarP4.M(), weight )
+                    # Fill out the kinematics of the probe jet for the background estimate.
+                    # The QCD MC will be used from these distributions to estiamte the mod mass procedure
+                    self.h_mttbar[isyscat].Fill( ttbarP4.M(), weight )
+                    if isys == self.nom:
+                        self.h_probejet_ak8pt[isyscat].Fill( probejet.Perp(), weight )                
+                        self.h_probejet_ak8msd[isyscat].Fill( probejet.msd(), weight )
+                        self.h_probejet_ak8m[isyscat].Fill( probejet.p4().M(), weight )
+                        self.h_probejet_ak8tau32[isyscat].Fill( proberaw.tau3 / proberaw.tau2 if proberaw.tau2 > 0.0 else 0.0, weight )
+                        self.h_probejet_ak8n3b1[isyscat].Fill( proberaw.n3b1, weight )                        
+
 
         return True
 
