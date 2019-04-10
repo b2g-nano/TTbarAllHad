@@ -18,6 +18,6 @@ print 'Input files are :'
 print inff
 
 p1=PostProcessor(".",inff,'nFatJet >= 2 && FatJet_pt[0] > 400. && FatJet_pt[1] > 400.','',
-                     [TTbarResControlPlotsHadronic()],
+                     [TTbarResAnaHadronic()],
                      provenance=True, histFileName='ttbarreshad.root', histDirName='ttbarres', noOut=True)
 p1.run()

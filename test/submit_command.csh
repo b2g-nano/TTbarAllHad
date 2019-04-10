@@ -27,7 +27,8 @@ cp hists/ControlPlots_crab__QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_RunIIFall
 mv mistag/mistag_rates.root .
 
 
-# Now run the background estimation. 
+# Now run the background estimation.
+python submit.py -c PSet.py -d BkgEstimate -f datasets/datasets_bkgs_Nano14Dec2018.txt -t BkgEstimate --shscript crab_script.sh --nanoscript run_plots.py -o ttbarreshad.root
 python submit.py -c PSet.py -d BkgEstimate -f datasets/datasets_jetht_13TeV_Nano14Dec2018.txt -t BkgEstimate --shscript crab_script.sh --nanoscript run_plots.py -o ttbarreshad.root -l all_goodruns_13TeV.txt
 python submit.py -c PSet.py -d BkgEstimate -f datasets/datasets_all_Nano14Dec2018.txt -t BkgEstimate --shscript crab_script.sh --nanoscript run_plots.py -o ttbarreshad.root
 

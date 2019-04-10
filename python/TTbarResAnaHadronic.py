@@ -395,8 +395,8 @@ class TTbarResAnaHadronic(Module):
                 ttbarP4 =  probejet.p4() + tagjet.p4()
                 modMass = self.modMass.GetRandom()
                 modMassP4 = ROOT.TLorentzVector()
-                modMassP4.SetPtEtaPhiM( probejet.Perp(), probejet.Eta(), probejet.Phi(), modMass )
-                modMass_ttbarP4 = tagjet + modMassP4                    
+                modMassP4.SetPtEtaPhiM( probejet.p4().Perp(), probejet.p4().Eta(), probejet.p4().Phi(), modMass )
+                modMass_ttbarP4 = tagjet.p4() + modMassP4
 
                 
                 if isys == self.nom :                    
@@ -414,7 +414,7 @@ class TTbarResAnaHadronic(Module):
                     # The QCD MC will be used from these distributions to estiamte the mod mass procedure
                     self.h_mttbar[isyscat].Fill( ttbarP4.M(), weight )
                     if isys == self.nom:
-                        self.h_probejet_ak8pt[isyscat].Fill( probejet.Perp(), weight )                
+                        self.h_probejet_ak8pt[isyscat].Fill( probejet.p4().Perp(), weight )                
                         self.h_probejet_ak8msd[isyscat].Fill( probejet.msd(), weight )
                         self.h_probejet_ak8m[isyscat].Fill( probejet.p4().M(), weight )
                         self.h_probejet_ak8tau32[isyscat].Fill( proberaw.tau3 / proberaw.tau2 if proberaw.tau2 > 0.0 else 0.0, weight )
