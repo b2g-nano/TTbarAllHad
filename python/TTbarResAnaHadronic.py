@@ -15,12 +15,17 @@ ROOT.gSystem.Load('libAnalysisPredictedDistribution')
 
 """@TTbarResAnaHadronic Package to perform the data-driven mistag-rate-based ttbar hadronic analysis. 
 
-This module must be run twice: first to make the mistag rate in the "anti-tag and probe" selection,
-and then applies that mistag rate to the single-tag selection. These are all done in bins of
+This module must be run twice: 
+1. Make the mistag rate in the "anti-tag and probe" selection 
+and the expectation in the signal region from MC,
+2. Applies that mistag rate and the mod-mass procedure to the single-tag selection. 
+
+These are all done in bins of
 b-tag categories (0, 1, >=2) and rapidity (|y| <= 1.0, |y| > 1.0).
 The signal region is two top-tagged jets. 
 The background estimate is the single-tag selection weighted by the mistag rate from the
-"anti-tag and probe" region. 
+"anti-tag and probe" region, with the mass of the weighted jet set to a random
+value from QCD MC in the 1-ttag region. 
 
 The preselection is:
  - AK4-based HT > 1100 GeV (to be on the trigger plateau). 
@@ -51,22 +56,6 @@ class TTbarResAnaHadronic(Module):
         self.writeHistFile = True
         self.isData = isData
         self.year=year
-        if modMassFileName is None:
-            self.modMassFile = ROOT.TFile("modmass.root")
-        else :
-            self.modMassFile = ROOT.TFile(modMassFileName)
-        self.modMass = self.modMassFile.Get("ttbarres/h_ak8m_mod")
-
-        # Zero out everything except the mass region of the tag to ensure unbiased kinematics.
-        # This is the "mass modified" procedure.
-        xmin = self.modMass.GetXaxis().FindBin(140.)
-        xmax = self.modMass.GetXaxis().FindBin(240.)
-        for ibin in range(0,xmin):
-            self.modMass.SetBinContent(ibin,0)
-            self.modMass.SetBinError(ibin,0)
-        for ibin in range(xmax, self.modMass.GetNbinsX()+1):
-            self.modMass.SetBinContent(ibin,0)
-            self.modMass.SetBinError(ibin,0)
         
         if not self.isData : 
             self.systs = [
@@ -99,6 +88,29 @@ class TTbarResAnaHadronic(Module):
 
         print self.systs_anacats
 
+
+        if modMassFileName is None:
+            self.modMassFile = ROOT.TFile("modmass.root")
+        else :
+            self.modMassFile = ROOT.TFile(modMassFileName)
+        print [ "ttbarres/h_tagjet_ak8m_%s" % s for s in self.systs_anacats if 'nom' in s ]
+        self.modMass = [ self.modMassFile.Get("ttbarres/h_tagjet_ak8m_%s" % s ) for s in self.systs_anacats if 'nom' in s ]
+
+        # Zero out everything except the mass region of the tag to ensure unbiased kinematics.
+        # This is the "mass modified" procedure.
+        for mm in self.modMass:
+            xmin = mm.GetXaxis().FindBin(140.)
+            xmax = mm.GetXaxis().FindBin(240.)
+            for ibin in range(0,xmin):
+                mm.SetBinContent(ibin,0)
+                mm.SetBinError(ibin,0)
+            for ibin in range(xmax, mm.GetNbinsX()+1):
+                mm.SetBinContent(ibin,0)
+                mm.SetBinError(ibin,0)
+
+
+        
+
     def formcat(self, nbtag, ycat ):
         """Form analysis category based on nbtag and ycat.
 
@@ -128,18 +140,18 @@ class TTbarResAnaHadronic(Module):
         self.addObjectList (self.systs_anacats, ROOT.TH1F('h_ak8n3b1',  'h_ak8n3b1',  100, 0, 5.0) )
         self.addObjectList (self.systs_anacats, ROOT.TH1F('h_mttbar',   'h_mttbar',   100, 0, 5000) )
 
-        if not self.writePredDist:
-            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8pt',    'h_tagjet_ak8pt',    100, 0, 2500) )
-            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8msd',   'h_tagjet_ak8msd',   100, 0, 1000) )
-            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8m',     'h_tagjet_ak8m',     100, 0, 1000) )
-            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8tau32', 'h_tagjet_ak8tau32', 100, 0, 1.0) )
-            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8n3b1',  'h_tagjet_ak8n3b1',  100, 0, 5.0) )
-        else:
-            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8pt',    'h_antitagjet_ak8pt',    100, 0, 2500) )
-            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8msd',   'h_antitagjet_ak8msd',   100, 0, 1000) )
-            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8m',     'h_antitagjet_ak8m',     100, 0, 1000) )
-            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8tau32', 'h_antitagjet_ak8tau32', 100, 0, 1.0) )
-            self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8n3b1',  'h_antitagjet_ak8n3b1',  100, 0, 5.0) )
+
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8pt',    'h_tagjet_ak8pt',    100, 0, 2500) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8msd',   'h_tagjet_ak8msd',   100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8m',     'h_tagjet_ak8m',     100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8tau32', 'h_tagjet_ak8tau32', 100, 0, 1.0) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_tagjet_ak8n3b1',  'h_tagjet_ak8n3b1',  100, 0, 5.0) )
+
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8pt',    'h_antitagjet_ak8pt',    100, 0, 2500) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8msd',   'h_antitagjet_ak8msd',   100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8m',     'h_antitagjet_ak8m',     100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8tau32', 'h_antitagjet_ak8tau32', 100, 0, 1.0) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_antitagjet_ak8n3b1',  'h_antitagjet_ak8n3b1',  100, 0, 5.0) )
         
         self.addObjectList (self.systs_anacats, ROOT.TH1F('h_probejet_ak8pt',    'h_probejet_ak8pt',    100, 0, 2500) )
         self.addObjectList (self.systs_anacats, ROOT.TH1F('h_probejet_ak8msd',   'h_probejet_ak8msd',   100, 0, 1000) )
@@ -356,6 +368,7 @@ class TTbarResAnaHadronic(Module):
                 jet = ak8JetsSys[iak8Jet]
                 raw = jetSysCollAK8.jets_raw()[iak8Jet]
                 self.h_ak8pt[isyscat].Fill( jet.p4().Perp(), weight )                
+                self.h_ak8m[isyscat].Fill( jet.p4().M(), weight )
                 self.h_ak8msd[isyscat].Fill( jet.msd(), weight )
                 self.h_ak8tau32[isyscat].Fill( raw.tau3 / raw.tau2 if raw.tau2 > 0.0 else 0.0, weight )
                 self.h_ak8n3b1[isyscat].Fill( raw.n3b1, weight )
@@ -365,7 +378,7 @@ class TTbarResAnaHadronic(Module):
 
             
             # Check if the event is an anti-tag + probe case. In that case we fill the mistag rate. 
-            if self.writePredDist and isys == self.nom and self.passTopAntiTag(tagjet) :
+            if isys == self.nom and self.passTopAntiTag(tagjet) :
 
                 # Here are some control plots
                 self.h_antitagjet_ak8pt[isyscat].Fill( tagjet.p4().Perp(), weight )                
@@ -375,13 +388,15 @@ class TTbarResAnaHadronic(Module):
                 self.h_antitagjet_ak8n3b1[isyscat].Fill( tagraw.n3b1, weight )
 
                 # This is the denominator of the predicted distribution
-                self.preddist_den[anacat].Fill( probejet.p4().P(), weight )
-                self.preddistrho_den[anacat].Fill( probejet.msd() / probejet.p4().Perp(), weight )
+                if self.writePredDist :
+                    self.preddist_den[anacat].Fill( probejet.p4().P(), weight )
+                    self.preddistrho_den[anacat].Fill( probejet.msd() / probejet.p4().Perp(), weight )
 
                 # This is the numerator of the predicted distribution, plus control plots
                 if self.passTopTag( ak8JetsSys[iprobejet] ):
-                    self.preddist_num[anacat].Fill( probejet.p4().P(), weight )
-                    self.preddistrho_num[anacat].Fill( probejet.msd() / probejet.p4().Perp(), weight )
+                    if self.writePredDist:
+                        self.preddist_num[anacat].Fill( probejet.p4().P(), weight )
+                        self.preddistrho_num[anacat].Fill( probejet.msd() / probejet.p4().Perp(), weight )
                     self.h_probejet_ak8pt[isyscat].Fill( probejet.p4().Perp(), weight )                
                     self.h_probejet_ak8msd[isyscat].Fill( probejet.msd(), weight )
                     self.h_probejet_ak8m[isyscat].Fill( probejet.p4().M(), weight )
@@ -391,18 +406,19 @@ class TTbarResAnaHadronic(Module):
                 return True
                     
             # Check if we have >=1 ttag
-            if not self.writePredDist and self.passTopTag(tagjet) :
-                ttbarP4 =  probejet.p4() + tagjet.p4()
-                modMass = self.modMass.GetRandom()
-                modMassP4 = ROOT.TLorentzVector()
-                modMassP4.SetPtEtaPhiM( probejet.p4().Perp(), probejet.p4().Eta(), probejet.p4().Phi(), modMass )
-                modMass_ttbarP4 = tagjet.p4() + modMassP4
-
+            if self.passTopTag(tagjet) :
                 
-                if isys == self.nom :                    
-                    self.predJetP[anacat].Accumulate( probejet.p4().P(), probejet.p4().P(), isTaggedDict[iprobejet], weight )
-                    self.predJetMTTBAR[anacat].Accumulate( ttbarP4.M(), probejet.p4().P(), isTaggedDict[iprobejet], weight )
-                    self.predJetMTTBARMod[anacat].Accumulate( modMass_ttbarP4.M(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
+                if isys == self.nom :
+                    ttbarP4 =  probejet.p4() + tagjet.p4()
+
+                    if not self.writePredDist:
+                        modMass = self.modMass[isyscat].GetRandom()
+                        modMassP4 = ROOT.TLorentzVector()
+                        modMassP4.SetPtEtaPhiM( probejet.p4().Perp(), probejet.p4().Eta(), probejet.p4().Phi(), modMass )
+                        modMass_ttbarP4 = tagjet.p4() + modMassP4
+                        self.predJetP[anacat].Accumulate( probejet.p4().P(), probejet.p4().P(), isTaggedDict[iprobejet], weight )
+                        self.predJetMTTBAR[anacat].Accumulate( ttbarP4.M(), probejet.p4().P(), isTaggedDict[iprobejet], weight )
+                        self.predJetMTTBARMod[anacat].Accumulate( modMass_ttbarP4.M(), ak8JetsSys[iprobejet].p4().P(), isTaggedDict[iprobejet], weight )
                     self.h_tagjet_ak8pt[isyscat].Fill( tagjet.p4().Perp(), weight )                
                     self.h_tagjet_ak8msd[isyscat].Fill( tagjet.msd(), weight )
                     self.h_tagjet_ak8m[isyscat].Fill( tagjet.p4().M(), weight )
