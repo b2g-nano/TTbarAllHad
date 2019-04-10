@@ -9,10 +9,11 @@ python submit.py -c PSet.py -d WriteMistags -f datasets/datasets_qcdmc_binned.tx
 python multicrab.py -c status -w WriteMistags
 
 # Add them together
-python hadd_files.py -d WriteMistags
+python hadd_dirs.py -d WriteMistags
 hadd WriteMistags_crab__JetHT_Run2016-Nano14Dec2018-v1.root WriteMistags_crab__JetHT_Run2016*.root
 hadd WriteMistags_crab__JetHT_Run2017-Nano14Dec2018-v1.root WriteMistags_crab__JetHT_Run2017*.root
 hadd WriteMistags_crab__JetHT_Run2018-Nano14Dec2018-v1.root WriteMistags_crab__JetHT_Run2018*.root
+mv WriteMistags* hists/
 
 #
 # Next : run the ipynbs for mistags and control plots. These will create files that are used for the bkg estimate.
