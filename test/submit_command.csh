@@ -1,9 +1,13 @@
 # Submit the crab files 
 
 python submit.py -c PSet.py -d WriteMistags -f datasets/datasets_jetht_13TeV_Nano14Dec2018.txt -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root -l all_goodruns_13TeV.txt
-python submit.py -c PSet.py -d WriteMistags -f datasets/datasets_signals_Nano14Dec2018.txt -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
 python submit.py -c PSet.py -d WriteMistags -f datasets/datasets_bkgs_Nano14Dec2018.txt -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
+
+# Run this if you need more statistics than the QCD flat sample
 python submit.py -c PSet.py -d WriteMistags -f datasets/datasets_qcdmc_binned.txt -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
+# Run this if you want tagging rate plots in the anti-tag + probe region for signal for some reason
+python submit.py -c PSet.py -d WriteMistags -f datasets/datasets_signals_Nano14Dec2018.txt -t WriteMistags --shscript crab_script_mistag.sh --nanoscript run_write_mistagrate.py -o ttbarreshad.root
+
 
 # After output, get the results
 python multicrab.py -c status -w WriteMistags
@@ -14,14 +18,8 @@ hadd WriteMistags_crab__JetHT_Run2016-Nano14Dec2018-v1.root WriteMistags_crab__J
 hadd WriteMistags_crab__JetHT_Run2017-Nano14Dec2018-v1.root WriteMistags_crab__JetHT_Run2017*.root
 hadd WriteMistags_crab__JetHT_Run2018-Nano14Dec2018-v1.root WriteMistags_crab__JetHT_Run2018*.root
 mv WriteMistags* hists/
-
-
-# Get the control region plots in the background MC. The QCD MC is needed for the mod mass corrections.
-
-python submit.py -c PSet.py -d BkgEstimate -f datasets/datasets_bkgs_Nano14Dec2018.txt -t BkgEstimate --shscript crab_script.sh --nanoscript run_plots.py -o ttbarreshad.root
-python hadd_dirs.py -d BkgEstimate
-mv BkgEstimate_*.root hists/
-cp hists/BkgEstimate_crab__QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_RunIIFall17NanoAODv4-PU2017_12Apr2018_Nano14Dec2018_102X.root ./modmass.root
+# The flat QCD MC is the mod mass sample:
+cp hists/WriteMistags_crab__QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8_RunIIFall17NanoAODv4-PU2017_12Apr2018_Nano14Dec2018_102X.root ./modmass.root
 
 #
 # Next : run the ipynbs for mistags and control plots. These will create files that are used for the bkg estimate.
