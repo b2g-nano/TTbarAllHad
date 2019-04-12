@@ -37,6 +37,7 @@ class HistDriver :
             '2016':StyleDriver(name="2016",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,markerColor=ROOT.kBlack,fillStyle=None,fillColor=None),
             '2017':StyleDriver(name="2017",markerStyle=21,lineStyle=1,lineColor=ROOT.kBlue,markerColor=ROOT.kBlue,fillStyle=None,fillColor=None),
             '2018':StyleDriver(name="2018",markerStyle=22,lineStyle=1,lineColor=ROOT.kRed,markerColor=ROOT.kRed,fillStyle=None,fillColor=None),
+            'ttbar':StyleDriver(name="t#bar{t}",markerStyle=0,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kRed),
             }
 
         
@@ -66,12 +67,26 @@ class HistDriver :
 
         if xAxisRange != None :
             hist.GetXaxis().SetRangeUser(xAxisRange[0],xAxisRange[2])
-        ratio = hist.Clone( hist.GetName() + rationame )            
+
+        if isinstance(hist, ROOT.TH1F):        
+            ratio = hist.Clone( hist.GetName() + rationame )
+            ratio.SetTitle( hist.GetTitle() )
+        elif isinstance(hist, ROOT.THStack):
+            ratio = hist.GetStack().Last().Clone( hist.GetName() + rationame )
+            ratio.SetTitle( hist.GetTitle() )
         pad1.cd()
-        hist.GetYaxis().SetTitleOffset(1.2)
-        hist.GetXaxis().SetTitleSize(0)
-        hist.GetXaxis().SetLabelSize(0)
+        
         hist.Draw(option1)
+        if isinstance(hist, ROOT.TH1F):            
+            hist.GetYaxis().SetTitleOffset(1.2)
+            hist.GetXaxis().SetTitleSize(0)
+            hist.GetXaxis().SetLabelSize(0)
+        elif isinstance(hist,ROOT.THStack):            
+            hist.GetYaxis().SetTitleOffset(1.2)
+            hist.GetXaxis().SetTitleSize(0)
+            hist.GetXaxis().SetLabelSize(0)
+        
+        
         pad1.SetLogy(logy)
         pad1.SetLogx(logx)
         pad2.cd()
@@ -82,8 +97,12 @@ class HistDriver :
         if logx :
             ratio.GetXaxis().SetNoExponent()
         if ratiotitle != None :
-            ratio.GetYaxis().SetTitle(ratiotitle)            
-        ratio.Divide( nominal )
+            ratio.GetYaxis().SetTitle(ratiotitle)
+        if isinstance( nominal, ROOT.TH1F):
+            ratio.Divide( nominal )
+        elif isinstance(nominal, ROOT.THStack):
+            ratio.Divide( nominal.GetStack().Last() )
+        ratio.Draw(option2)
         ratio.GetXaxis().SetTickLength(0.07)
         ratio.GetYaxis().SetNdivisions(2,4,0,False)
         ratio.GetYaxis().SetTitleSize(0.10)
@@ -92,7 +111,7 @@ class HistDriver :
         ratio.GetYaxis().SetTitleOffset(0.6)
         ratio.GetXaxis().SetTitleOffset(3.5)
 
-        ratio.Draw(option2)
+        
         
         if ratiorange != None :
             ratio.SetMinimum( ratiorange[0] )
