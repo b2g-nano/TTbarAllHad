@@ -10,7 +10,7 @@ python submit.py -c PSet.py -d WriteMistags -f datasets/datasets_signals_Nano14D
 
 
 # After output, get the results
-python multicrab.py -c status -w WriteMistags
+python multicrab.py -c getoutput -w WriteMistags
 
 # Add them together
 python hadd_dirs.py -d WriteMistags
@@ -35,8 +35,8 @@ mv mistag/mistag_rates.root .
 # Now run the background estimation.
 python submit.py -c PSet.py -d BkgEstimate -f datasets/datasets_bkgs_Nano14Dec2018.txt -t BkgEstimate --shscript crab_script.sh --nanoscript run_plots.py -o ttbarreshad.root
 python submit.py -c PSet.py -d BkgEstimate -f datasets/datasets_jetht_13TeV_Nano14Dec2018.txt -t BkgEstimate --shscript crab_script.sh --nanoscript run_plots.py -o ttbarreshad.root -l all_goodruns_13TeV.txt
-python submit.py -c PSet.py -d BkgEstimate -f datasets/datasets/datasets_signals_Nano14Dec2018.txt -t BkgEstimate --shscript crab_script.sh --nanoscript run_plots.py -o ttbarreshad.root
-python submit.py -c PSet.py -d BkgEstimate -f datasets/datasets/datasets_qcdmc_binned.txt -t BkgEstimate --shscript crab_script.sh --nanoscript run_plots.py -o ttbarreshad.root
+python submit.py -c PSet.py -d BkgEstimate -f datasets/datasets_signals_Nano14Dec2018.txt -t BkgEstimate --shscript crab_script.sh --nanoscript run_plots.py -o ttbarreshad.root
+python submit.py -c PSet.py -d BkgEstimate -f datasets/datasets_qcdmc_binned.txt -t BkgEstimate --shscript crab_script.sh --nanoscript run_plots.py -o ttbarreshad.root
 
 # Add them together
 python hadd_dirs.py -d BkgEstimate
