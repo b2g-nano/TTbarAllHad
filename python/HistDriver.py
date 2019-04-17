@@ -34,6 +34,7 @@ class HistDriver :
         self.styles = {
             #'nom':StyleDriver(name="nom",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray),
             'pythia8':StyleDriver(name="pythia8",markerStyle=0,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kYellow),
+            'data':StyleDriver(name="data",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,markerColor=ROOT.kBlack,fillStyle=None,fillColor=None),
             '2016':StyleDriver(name="2016",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,markerColor=ROOT.kBlack,fillStyle=None,fillColor=None),
             '2017':StyleDriver(name="2017",markerStyle=21,lineStyle=1,lineColor=ROOT.kBlue,markerColor=ROOT.kBlue,fillStyle=None,fillColor=None),
             '2018':StyleDriver(name="2018",markerStyle=22,lineStyle=1,lineColor=ROOT.kRed,markerColor=ROOT.kRed,fillStyle=None,fillColor=None),

@@ -158,6 +158,13 @@ class TTbarResAnaHadronic(Module):
         self.addObjectList (self.systs_anacats, ROOT.TH1F('h_probejet_ak8m',     'h_probejet_ak8m',     100, 0, 1000) )
         self.addObjectList (self.systs_anacats, ROOT.TH1F('h_probejet_ak8tau32', 'h_probejet_ak8tau32', 100, 0, 1.0) )
         self.addObjectList (self.systs_anacats, ROOT.TH1F('h_probejet_ak8n3b1',  'h_probejet_ak8n3b1',  100, 0, 5.0) )
+
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_signalregion_ak8pt',    'h_signalregion_ak8pt',    100, 0, 2500) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_signalregion_ak8msd',   'h_signalregion_ak8msd',   100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_signalregion_ak8m',     'h_signalregion_ak8m',     100, 0, 1000) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_signalregion_ak8tau32', 'h_signalregion_ak8tau32', 100, 0, 1.0) )
+        self.addObjectList (self.systs_anacats, ROOT.TH1F('h_signalregion_ak8n3b1',  'h_signalregion_ak8n3b1',  100, 0, 5.0) )
+
         
         
         if not self.writePredDist:
@@ -430,11 +437,11 @@ class TTbarResAnaHadronic(Module):
                     # The QCD MC will be used from these distributions to estiamte the mod mass procedure
                     self.h_mttbar[isyscat].Fill( ttbarP4.M(), weight )
                     if isys == self.nom:
-                        self.h_probejet_ak8pt[isyscat].Fill( probejet.p4().Perp(), weight )                
-                        self.h_probejet_ak8msd[isyscat].Fill( probejet.msd(), weight )
-                        self.h_probejet_ak8m[isyscat].Fill( probejet.p4().M(), weight )
-                        self.h_probejet_ak8tau32[isyscat].Fill( proberaw.tau3 / proberaw.tau2 if proberaw.tau2 > 0.0 else 0.0, weight )
-                        self.h_probejet_ak8n3b1[isyscat].Fill( proberaw.n3b1, weight )                        
+                        self.h_signalregion_ak8pt[isyscat].Fill( probejet.p4().Perp(), weight )                
+                        self.h_signalregion_ak8msd[isyscat].Fill( probejet.msd(), weight )
+                        self.h_signalregion_ak8m[isyscat].Fill( probejet.p4().M(), weight )
+                        self.h_signalregion_ak8tau32[isyscat].Fill( proberaw.tau3 / proberaw.tau2 if proberaw.tau2 > 0.0 else 0.0, weight )
+                        self.h_signalregion_ak8n3b1[isyscat].Fill( proberaw.n3b1, weight )                        
 
 
         return True
